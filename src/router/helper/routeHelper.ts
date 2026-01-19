@@ -42,7 +42,7 @@ function dynamicImport(
   const matchKeys = keys.filter((key) => {
     const k = key.replace('../../views', '')
     const startFlag = component.startsWith('/')
-    const endFlag = component.endsWith('.vue') || component.endsWith('.tsx')
+    const endFlag = component?.endsWith('.vue') || component?.endsWith('.tsx')
     const startIndex = startFlag ? 0 : 1
     const lastIndex = endFlag ? k.length : k.lastIndexOf('.')
     return k.substring(startIndex, lastIndex) === component

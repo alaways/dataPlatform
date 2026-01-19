@@ -1,0 +1,41 @@
+<template>
+  <iframe
+    width="100%"
+    height="800px"
+    :src="iframeUrl" 
+  ></iframe>
+</template>
+<script lang="ts">
+  import { defineComponent, ref } from 'vue'
+  import { getMayiToken } from '/@/utils/index'
+  const props = {
+    dataSource: { type: String, default: 'xx'}
+  }
+  export default defineComponent({
+    name: 'CollectionRemitPage',
+    props,
+    setup() {
+      const mayiToken = getMayiToken()
+      const iframeUrl = ref(`https://admin.gsrental.cn/mayiAdmin/assets/index.d868d633b.js/iframe=true#/zzy?path=System/Account&iframe=true&mayiToken=${mayiToken}`)
+      return {
+        iframeUrl,
+      }
+    },
+  })
+</script>
+
+<style lang="less" scoped>
+  .TableAction {
+    flex-direction: column;
+
+    ::v-deep.vben-basic-table-action {
+      button {
+        margin-bottom: 2px;
+      }
+
+      .action-divider {
+        display: none !important;
+      }
+    }
+  }
+</style>

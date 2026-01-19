@@ -1,69 +1,36 @@
 <template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #action="{ record }">
-        <TableAction
-          class="TableAction"
-          :actions="[
-            {
-              // ifShow: hasPermission('CollectionCommissionPage'),
-              label: '催收配置',
-              onClick: gotoPage.bind(null, record),
-            },
-          ]"
-        />
-      </template>
-    </BasicTable>
+  <div class="taskCont">
+    <ATabs v-model:activeKey="currentKey">
+      <ATabPane tab="线下" key="offline">
+        <Offline />
+      </ATabPane>
+      <ATabPane tab="线上" key="online">
+        <Online />
+        <!--  -->
+      </ATabPane>
+    </ATabs>
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent, onMounted } from 'vue'
-  import { BasicTable, useTable, TableAction } from '/@/components/Table'
-  import { pageColumns } from './data'
-  import { useGo } from '/@/hooks/web/usePage'
-  import { cloneDeep } from 'lodash-es'
-  import { usePermission } from '/@/hooks/web/usePermission'
-  import { Recordable } from 'vite-plugin-mock'
-  import { getCollectsPage } from '/@/api/collection/commission'
-  const props = {
-    detailInfo: { type: Object },
-    ifStore: { type: String },
-    isAllocation: { type: Boolean },
-  }
+  import { defineComponent, ref } from 'vue'
+  import Online from './online.vue'
+  import Offline from './offline.vue'
+  import { Tabs } from 'ant-design-vue'
   export default defineComponent({
     name: 'CollectionSetting',
-    props,
-    components: { BasicTable, TableAction },
+    components: { ATabs: Tabs, ATabPane: Tabs.TabPane, Online, Offline },
     setup() {
-      const go = useGo()
-      const { hasPermission } = usePermission()
-      const [registerTable, { reload, getForm, getPaginationRef, clearSelectedRowKeys} ] = useTable(
-        {
-          title: '催收任务',
-          scroll: { y: 600 },
-          api: getCollectsPage,
-          columns: pageColumns,
-          useSearchForm: false,
-          bordered: true,
-          canResize: false,
-          showIndexColumn: false,
-          actionColumn: {
-            width: 120,
-            title: '操作',
-            dataIndex: 'action',
-            slots: { customRender: 'action' },
-            fixed: 'right',
-          },
-        },
-      )
-      function gotoPage(record: Recordable) {
-        go(`/CollectionPage/CollectionCommissionPage?dataSources=${record.dataSources}&back=/CollectionPage/CollectionSetting`)
-      }
-      return {
-        registerTable,
-        gotoPage,
-        hasPermission,
-      }
+      const currentKey = ref('offline')
+      setTimeout(() => {
+        // 使用querySelector选择元素
+        var myDiv = document.querySelector('.taskCont .ant-tabs-top .ant-tabs-nav')
+        // 修改样式
+        if (myDiv) {
+          myDiv.style.padding = '0 24px'
+          myDiv.style.margin = '0'
+        }
+      }, 1000)
+      return { currentKey }
     },
   })
 </script>

@@ -223,7 +223,6 @@
           pdata['beginCreateTime'] = `${pdata.time[0]}`
           pdata['endCreateTime'] = `${pdata.time[1]}`
         }
-        console.log('isShowNav', pdata.isNewAllocat)
 
         if (pdata.isNewAllocat == 0) {
           isShowNav.value = true
@@ -326,7 +325,6 @@
           createMessage.error(`请先选择订单`)
           return
         }
-        console.log(rowList.value, '多选选择的订单ID')
         const orderIds = rowList.value.map((v) => v.id).join(',')
         batchModal(true, {
           record,

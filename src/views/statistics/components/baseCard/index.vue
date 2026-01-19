@@ -16,6 +16,15 @@
           </Tooltip>
         </div>
         <div class="desc">{{ item?.amount }}</div>
+        <div class="itemBottom" v-if="item?.showYes">
+          {{ item?.yesterAmount }}
+          较前1日
+          <span v-if="getYesterLv(item?.yesterLv) != '-'">
+            <ArrowDownOutlined v-if="item?.isUp" style="color: red" />
+            <ArrowUpOutlined v-else style="color: green" />
+          </span>
+          {{ getYesterLv(item?.yesterLv) }}
+        </div>
       </Card>
     </div>
   </Card>
@@ -25,12 +34,17 @@
   import { Card, Tooltip } from 'ant-design-vue'
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
   import dayjs from 'dayjs'
+  import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons-vue'
+
   interface listItem {
     id: string | number
     color: string
     label: string
     titple: string | undefined
     amount: string | number
+    yesterAmount: string | number | undefined
+    showYes: boolean | undefined
+    yesterLv: string | number | undefined
   }
   const props = {
     list: Array<listItem>,
@@ -40,7 +54,7 @@
   }
   export default defineComponent({
     name: 'StoreList',
-    components: { Card, ExclamationCircleOutlined, Tooltip },
+    components: { Card, ExclamationCircleOutlined, Tooltip, ArrowDownOutlined, ArrowUpOutlined },
     props,
     setup(props) {
       const _props = props
@@ -57,25 +71,111 @@
           }
         },
       )
+      const getYesterLv = (lv) => {
+        if (lv == '0' || lv == 0 || lv == '0%') return '-'
+        if (typeof lv == 'number') {
+          return String(lv)?.replace('-', '')
+        }
+        return lv?.replace('-', '')
+      }
       // 是否百分比
-      const addLvHanld = (item: any, type = false) => {
+      const addLvHanld = (item: any, type = false, isNum) => {
         if (type) {
           const num = item.toFixed(2)
           return `${num}%`
         }
-        const num = (item * 100).toFixed(3)
-        return `${String(num)?.slice(0, 4)}%`
+        const num = Number(item).toFixed(6)
+        const allNum = (Number(num) * 100).toFixed(3)
+        let fen = String(allNum).split('.')[1]
+        fen = fen?.slice(0, 2)
+        if (isNum) return Number(String(allNum).split('.')[0] + '.' + fen)
+        return `${String(allNum).split('.')[0] + '.' + fen}%`
+      }
+      const getOrderYesObj = {
+        placeOrderCount: ['yestePlaceOrderCount', 'placeOrderCountRate'],
+        rentOrderCount: ['yesteRentOrderCount', 'rentOrderCountRate'],
+        registerUserCount: ['yesteRegisterUserCount', 'registerUserCountRate'],
+        rentAlreadyOverOrderCount: [
+          'yesteRentAlreadyOverOrderCount',
+          'rentAlreadyOverOrderCountRate',
+        ],
+        endOrderCout: ['yesteEndOrderCout', 'endOrderCoutRate'],
+        overOrderCount: ['yesteOverOrderCount', 'overOrderCountRate'],
+        rentOverOrderAmount: ['yesteRentOverOrderAmount', 'rentOverOrderAmountRate'],
+        todayOvereOrderCount: ['yesteOvereOrderCount', 'todayOvereOrderCountRate'],
+        todayOverOrderAmount: ['yesteOverOrderAmount', 'todayOverOrderAmountRate'],
+        totalContractAmount: ['yesteTotalContractAmount', 'totalContractAmountRate'],
+        totalOutstandingAmount: ['yesteTotalOutstandingAmount', 'totalOutstandingAmountRate'],
+        totalAmountRentalOrder: ['yesteTotalAmountRentalOrder', 'totalAmountRentalOrderRate'],
+        totalDownPayment: ['yesteTotalDownPayment', 'totalDownPaymentRate'],
+        amountRentLease: ['yesteAmountRentLease', 'amountRentLeaseRate'],
+        amountOverdueRent: ['yesteAmountOverdueRent', 'amountOverdueRentRate'],
+        rentReductionAmount: ['yesteRentReductionAmount', 'rentReductionAmountRate'],
+        overdueTotalRateAmount: ['yesteOverdueTotalRateAmount', 'overdueTotalRateAmountRate'],
+        rentTotalOverOrderAmount: ['yesteRentTotalOverOrderAmount', 'rentTotalOverOrderAmountRate'],
+        overdueRateAmount: ['yesteOverdueRateAmount', 'overdueRateAmountRate'],
+        totalAmountReceived: ['yesteTotalAmountReceived', 'totalAmountReceivedRate'],
+        amountSettled: ['yesteAmountSettled', 'amountSettledRate'],
+        amountRentPaidInstallments: [
+          'yesteAmountRentPaidInstallments',
+          'amountRentPaidInstallmentsRate',
+        ],
+        depositAmount: ['yesteDepositAmount', 'depositAmountRate'],
+        penaltyAmountRentalPaid: ['yestePenaltyAmountRentalPaid', 'penaltyAmountRentalPaidRate'],
+        amountTotalCollectedRental: [
+          'yesteAmountTotalCollectedRental',
+          'amountTotalCollectedRentalRate',
+        ],
+        amountReceivableRental: ['yesteAmountReceivableRental', 'amountReceivableRentalRate'],
+        totalAmountFinesCollected: [
+          'yesteTotalAmountFinesCollected',
+          'totalAmountFinesCollectedRate',
+        ],
+        penaltyReductionAmount: ['yestePenaltyReductionAmount', 'penaltyReductionAmountRate'],
+        totalDownPaymentAmount: ['yesteTotalDownPaymentAmount', 'totalDownPaymentAmountRate'],
+        rentTotalNotOverOrderAmount: [
+          'yesteRentTotalNotOverOrderAmount',
+          'rentTotalNotOverOrderAmountRate',
+        ],
+        amountReceivable: ['yesteAmountReceivable', 'amountReceivableRate'],
+        amountTotalCollected: ['yesteAmountTotalCollected', 'amountTotalCollectedRate'],
+        currentRentIngLv: ['yesteCurrentRentIngLv', 'currentRentIngLvRate'],
+        currentRentOutLv: ['yesteCurrentRentOutLv', 'currentRentOutLvRate'],
       }
       const getDetailInfo = async () => {
         const contentList = cardList.value
-        console.log(cardList.value, contentList, 'cardList.valueSHow')
         Object.keys(cutRes.value).forEach((Ritem) => {
           cardList.value = contentList.map((item: any) => {
             if (item.id === Ritem) {
-              item.amount = `${cutRes.value?.[Ritem]?.toLocaleString()}`
+              // 设置昨日数据
+              if (getOrderYesObj[item.id]) {
+                const yesterDayNum = getOrderYesObj[item.id]?.[0]
+                const yesterDayLv = getOrderYesObj[item.id]?.[1]
+                item.yesterAmount = Number(cutRes.value[yesterDayNum]).toLocaleString()
+                item.yesterLv = cutRes.value[yesterDayLv] + '%'
+                item.isUp = cutRes.value[yesterDayLv] > 0 ? true : false
+              }
+              item.amount = `${Number(cutRes.value?.[Ritem])?.toLocaleString()}`
               if (item.isAddLv) {
-                console.log(item.amount, 'itemAmount')
+                const yesterDayNum = getOrderYesObj[item.id]?.[0]
+                item.yesterAmount = addLvHanld(cutRes.value[yesterDayNum])
                 item.amount = addLvHanld(cutRes.value?.[Ritem])
+              }
+              // 在租订单金额逾期率
+              if (item.id === 'overdueTotalRateAmount') {
+                const lv: any =
+                  addLvHanld(cutRes.value['overdueTotalRateAmount'], false, true) -
+                  addLvHanld(cutRes.value['yesteOverdueTotalRateAmount'], false, true)
+                item.yesterLv = lv.toFixed(2) + '%'
+                item.isUp = lv.toFixed(2) > 0 ? true : false
+              }
+              // 总订单金额逾期率
+              if (item.id === 'overdueRateAmount') {
+                const lv: any =
+                  addLvHanld(cutRes.value['overdueRateAmount'], false, true) -
+                  addLvHanld(cutRes.value['yesteOverdueRateAmount'], false, true)
+                item.yesterLv = lv.toFixed(2) + '%'
+                item.isUp = lv.toFixed(2) > 0 ? true : false
               }
             }
             return item
@@ -96,6 +196,7 @@
         dayjs,
         title,
         isHideTitle,
+        getYesterLv,
       }
     },
   })

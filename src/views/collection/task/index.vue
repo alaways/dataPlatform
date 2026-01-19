@@ -1,24 +1,14 @@
 <template>
-  <PageWrapper contentBackground>
+  <div class="taskCont">
     <!-- 头部筛选 -->
-    <BasicTable @register="registerTable">
-      <template #tabCode>
-        disdfl
-        <!-- <Select :options="tableMenus" /> -->
-      </template>
-    </BasicTable>
-    <PageWrapper class="taskCont">
-      <template #footer>
-        <ATabs v-model:activeKey="currentKey">
-          <ATabPane v-for="item in menuList" :tab="item.tab" :key="item.key" />
-        </ATabs>
-      </template>
-      <div class="m-4">
-        <component v-if="detailInfo" :is="currentKey" :detailInfo="detailInfo" :payload="payload" />
-        <Skeleton v-else :active="true" :loading="loading" :paragraph="{ rows: 16 }" />
-      </div>
-    </PageWrapper>
-  </PageWrapper>
+    <ATabs v-model:activeKey="currentKey">
+      <ATabPane v-for="item in menuList" :tab="item.tab" :key="item.key" />
+    </ATabs>
+    <div>
+      <component v-if="detailInfo" :is="currentKey" :detailInfo="detailInfo" :payload="payload" />
+      <Skeleton v-else :active="true" :loading="loading" :paragraph="{ rows: 16 }" />
+    </div>
+  </div>
 </template>
 
 <script lang="tsx">
@@ -61,57 +51,65 @@
       const isAllocation = ref(false)
       const loading = ref(false)
       const searchLoading = ref(false)
-      const tableMenus = ref([])
+      const tableMenus = ref<any>([])
       const tabsList = [
         { tab: '诉讼中', key: '1' },
         { tab: '新派单', key: '2' },
       ]
+      const tabsActiveKyes = ref('1')
       if (route.query.isAllocation) {
         isAllocation.value = route.query.isAllocation == '1'
       }
-      const payload = ref()
+      const payload = ref({ tabCode: '2' })
       // 返回上一页
       function goBack() {
         go(String(back.value))
       }
-      console.log(searchFormSchema, '打印数据')
       const handleSearchInfoChange = (data) => {
         payload.value = data
         setLoading(true)
         setTimeout(() => {
           setLoading(false)
         }, 1000)
-        console.log('显示调用')
       }
-      const [registerTable, { setLoading, getForm, getPaginationRef, clearSelectedRowKeys }] = useTable(
-        {
-          scroll: { y: 0 },
-          emptyDataIsShowTable: false,
-          columns: [],
-          formConfig: {
-            labelWidth: 80,
-            schemas: searchFormSchema,
-            autoAdvancedLine: 10,
-          },
-          useSearchForm: true,
-          bordered: true,
-          canResize: false,
-          showIndexColumn: false,
-          pagination: false,
-          loading: searchLoading.value,
-          handleSearchInfoFn: handleSearchInfoChange,
-        }
-      )
+      const [registerTable, { setLoading, getForm }] = useTable({
+        scroll: { y: 0 },
+        emptyDataIsShowTable: false,
+        columns: [],
+        formConfig: {
+          labelWidth: 80,
+          schemas: searchFormSchema,
+          autoAdvancedLine: 10,
+        },
+        useSearchForm: true,
+        bordered: true,
+        canResize: false,
+        showIndexColumn: false,
+        pagination: false,
+        loading: searchLoading.value,
+        handleSearchInfoFn: handleSearchInfoChange,
+      })
       const init = () => {
+        // payload.value = getForm()
+        console.log(getForm(), 'getFormShow')
         getCollectsStatusList({ cursor: 999999, status: 1, isNew: 1 }).then((res) => {
           res = res.map((v) => {
             return { tab: v.name, key: `${v.code}` }
           })
+          console.log(res, tabsList, 'resShow')
           tableMenus.value = [...tabsList, ...res]
         })
+        setTimeout(() => {
+          // 使用querySelector选择元素
+          var myDiv = document.querySelector('.taskCont .ant-tabs-top .ant-tabs-nav')
+          // 修改样式
+          if (myDiv) {
+            myDiv.style.padding = '0 24px'
+            myDiv.style.margin = '0'
+          }
+        }, 1000)
       }
       init()
-      console.log(menuList, currentKey, tableMenus.value, 'menuListShow')
       return {
         menuList,
         currentKey,
@@ -122,6 +120,7 @@
         registerTable,
         payload,
         tableMenus,
+        tabsActiveKyes,
       }
     },
   })
@@ -131,11 +130,12 @@
   .ant-page-header.has-footer {
     padding-top: 0 !important;
   }
-  .taskCont {
-    margin-top: -48px;
+  ::deep .taskCont {
+    // margin-top: -48px;
     padding: 0;
-    .ant-page-header {
-      padding-top: 0 !important;
+    // background-color: red;
+    ::v-deep .ant-tabs-top {
+      padding: 0 30px !important;
     }
   }
 </style>

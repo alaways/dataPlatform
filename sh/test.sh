@@ -20,10 +20,10 @@ ssh-add "$SSH_PRIVATE_KEY"
 # 判断操作系统类型
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # macOS 需要 -i 后跟空字符串
-  sed -i '' "s|VITE_GLOB_API_URL=.*|VITE_GLOB_API_URL=$TEST_API_URL|" ../.env.production
+  sed -i '' "s|VITE_GLOB_API_URL=.*|VITE_GLOB_API_URL=$TEST_DATA_API_URL|" ../.env.production
 else
   # Linux 或 Git Bash 不需要
-  sed -i "s|VITE_GLOB_API_URL=.*|VITE_GLOB_API_URL=$TEST_API_URL|" ../.env.production
+  sed -i "s|VITE_GLOB_API_URL=.*|VITE_GLOB_API_URL=$TEST_DATA_API_URL|" ../.env.production
 fi
 
 # 测试环境 - 准备更新
@@ -48,24 +48,23 @@ fi
   # python3 send_message.py $WECOM_TECHNOLOGY_KEY "后台-测试环境-开始更新"
 
 # 将压缩包复制到对应路径下
-  scp $OUTPUT_NAME $USER_NAME@$TEST_IP:$TEST_PATH
+  scp $OUTPUT_NAME $USER_NAME@$TEST_IP:$TEST_DATA_PATH
 
 # 替换文件夹名称
-  ssh $USER_NAME@$TEST_IP mv $TEST_PATH/dist $TEST_PATH/old
+  ssh $USER_NAME@$TEST_IP mv $TEST_DATA_PATH/dist $TEST_DATA_PATH/old
 
 # 确保目标路径存在
-  # ssh $USER_NAME@$TEST_IP mkdir -p $TEST_PATH/dist
+  # ssh $USER_NAME@$TEST_IP mkdir -p $TEST_DATA_PATH/dist
 
 # 将dist copy到对应目录下
-  # scp -r ../dist $USER_NAME@$TEST_IP:$TEST_PATH
+  # scp -r ../dist $USER_NAME@$TEST_IP:$TEST_DATA_PATH
 
 # 将解压包解压
-  ssh "$USER_NAME@$TEST_IP" "unzip $TEST_PATH/dist.zip -d $TEST_PATH"
+  ssh "$USER_NAME@$TEST_IP" "unzip $TEST_DATA_PATH/dist.zip -d $TEST_DATA_PATH"
 
 # 删除old文件
-  ssh $USER_NAME@$TEST_IP rm -r $TEST_PATH/old
-  ssh $USER_NAME@$TEST_IP rm -r $TEST_PATH/dist.zip
+  ssh $USER_NAME@$TEST_IP rm -r $TEST_DATA_PATH/old
+  ssh $USER_NAME@$TEST_IP rm -r $TEST_DATA_PATH/dist.zip
 
 # 测试环境 - 更新完毕
   # python3 send_message.py $WECOM_TECHNOLOGY_KEY "前端-后台-测试环境-更新完毕"
-

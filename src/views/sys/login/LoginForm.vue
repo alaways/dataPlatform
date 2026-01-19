@@ -64,6 +64,7 @@
   import { useUserStore } from '/@/store/modules/user'
   import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin'
   import { useDesign } from '/@/hooks/web/useDesign'
+  import { getMayiToken } from '/@/api/system/log'
   //import { onKeyStroke } from '@vueuse/core';
 
   const ACol = Col
@@ -123,7 +124,10 @@
           }`,
           duration: 3,
         })
+        const res = await getMayiToken()
+        localStorage.setItem('AllToken', JSON.stringify(res))
       }
+      // window.location.reload()
     } catch (error) {
       createErrorModal({
         title: t('sys.api.errorTip'),

@@ -3,6 +3,7 @@
     ref="selectRef"
     :open="open"
     allowClear
+    class="dateDIy"
     :options="options"
     @focus="() => (open = true)"
     @blur="handleBlur"
@@ -57,13 +58,16 @@
       Button,
       RangePicker: DatePicker.RangePicker,
     },
+    props: {
+      initGetDate: { type: Function as PropType<(arg?: Recordable) => Promise<Recordable>> },
+    },
     emits: ['options-change', 'change'],
-    setup(_, { emit }) {
+    setup(props, { emit }) {
       const options = ref<any>([])
       const selectRef = ref()
       const open = ref(false)
       const dateOpen = ref(false)
-      const dIndex = ref(-1)
+      const dIndex = ref(3)
       const dateArr = ref([])
       const header = ['天', '周', '月', '季度', '年度']
       const list = [
@@ -83,7 +87,20 @@
         '上一年度',
         '下一年度',
       ]
-
+      const init = () => {
+        const label = list[dIndex.value]
+        const value = handleDatePickerSelect(list[dIndex.value])
+        const find = options.value.find((v) => v.value == value)
+        if (!find) {
+          options.value.push({ label, value })
+        }
+        selectRef.value?.focus()
+        setTimeout(() => {
+          selectRef.value?.focus()
+        }, 800)
+        props?.initGetDate?.(handleDatePickerSelect(list[dIndex.value]))
+      }
+      init()
       // 注意，select 的 value 只是接受 string/number不接受数组
       // 所以 change 后，要使用要转成数组
       function handleSubmit() {

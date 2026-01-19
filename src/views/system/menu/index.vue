@@ -1,143 +1,59 @@
 <template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #toolbar>
-        <a-button type="primary" @click="handleCreate" v-if="hasPermission('MenuAdd')">
-          新增菜单
-        </a-button>
-      </template>
-      <template #action="{ record }">
-        <TableAction
-          :actions="[
-            {
-              ifShow: hasPermission('MenuCopy'),
-              label: '复制',
-              onClick: handleCopy.bind(null, record),
-            },
-            {
-              ifShow: hasPermission('MenuUpdate'),
-              label: '编辑',
-              onClick: handleEdit.bind(null, record),
-            },
-            {
-              ifShow: hasPermission('MenuDel'),
-              label: '删除',
-              popConfirm: {
-                title: '是否确认删除',
-                placement: 'left',
-                confirm: handleDelete.bind(null, record),
-              },
-            },
-          ]"
-        />
-      </template>
-    </BasicTable>
-    <MenuDrawer @register="registerDrawer" @success="handleSuccess" />
+  <div class="taskCont">
+    <Tabs v-model:activeKey="activeKey" class="biTabs">
+      <TabPane key="dataMenu" tab="中台">
+        <DataCom dataSource="xx" />
+      </TabPane>
+      <TabPane key="offlineMenu" tab="线下">
+        <Offline dataSource="xx" />
+      </TabPane>
+      <TabPane key="onlineMenu" tab="线上">
+        <Online dataSource="xs" />
+      </TabPane>
+    </Tabs>
   </div>
 </template>
 <script lang="ts">
   import { defineComponent, ref } from 'vue'
-
-  import { BasicTable, useTable, TableAction } from '/@/components/Table'
-  import { addMenuItem, delMenuItem, getMenuList } from '/@/api/system/menu'
-
-  import { useDrawer } from '/@/components/Drawer'
-  import MenuDrawer from './MenuDrawer.vue'
-
-  import { columns } from './menu.data'
+  import { Tabs } from 'ant-design-vue'
+  import Offline from './components/offline/index.vue'
+  import Online from './components/online/index.vue'
+  import DataCom from './components/data/index.vue'
   import { usePermission } from '/@/hooks/web/usePermission'
-  import { cloneDeep } from 'lodash-es'
-  import { useMessage } from '/@/hooks/web/useMessage'
-
+  const TabPane = Tabs.TabPane
   export default defineComponent({
-    name: 'MenuPage',
-    components: { BasicTable, MenuDrawer, TableAction },
+    name: 'OrderListPage',
+    components: {
+      Tabs,
+      TabPane,
+      Online,
+      Offline,
+      DataCom,
+    },
     setup() {
+      const activeKey = ref('dataMenu')
       const { hasPermission } = usePermission()
-      const { createMessage } = useMessage()
-
-      const [registerDrawer, { openDrawer }] = useDrawer()
-      const [registerTable, { reload }] = useTable({
-        title: '菜单列表',
-        api: getMenuList,
-        afterFetch,
-        columns,
-        pagination: false,
-        striped: false,
-        useSearchForm: false,
-        bordered: true,
-        showIndexColumn: false,
-        canResize: false,
-        actionColumn: {
-          width: 180,
-          title: '操作',
-          dataIndex: 'action',
-          slots: { customRender: 'action' },
-          fixed: 'right',
-        },
-      })
-
-      const parentList = ref([])
-      function afterFetch(data: any) {
-        const menuList = data.filter((v) => !v.parentId || v.parentId == 0)
-
-        function filterTree(children: any) {
-          return children.map((v) => {
-            return {
-              ...v,
-              label: v.menuName,
-              value: v.menuId,
-              children: filterTree(data.filter((ch) => ch.parentId == v.menuId)),
-            }
-          })
+      setTimeout(() => {
+        // 使用querySelector选择元素
+        var myDiv = document.querySelector('.taskCont .ant-tabs-top .ant-tabs-nav')
+        // 修改样式
+        if (myDiv) {
+          myDiv.style.padding = '0 24px'
+          myDiv.style.margin = '0'
         }
-        const dlist = filterTree(menuList)
-        parentList.value = cloneDeep(dlist)
-        return dlist
-      }
-
-      function handleCreate() {
-        openDrawer(true, {
-          isUpdate: false,
-          parentList,
-        })
-      }
-
-      function handleEdit(record: Recordable) {
-        openDrawer(true, {
-          record,
-          isUpdate: true,
-          parentList,
-        })
-      }
-
-      async function handleDelete(record: Recordable) {
-        await delMenuItem(record.menuId)
-        createMessage.success(`删除成功`)
-        handleSuccess()
-      }
-
-      function handleSuccess() {
-        reload()
-      }
-
-      async function handleCopy(record: Recordable) {
-        delete record.menuId
-        await addMenuItem(record)
-        createMessage.success(`复制成功`)
-        handleSuccess()
-      }
-
+      }, 1000)
       return {
-        registerTable,
-        registerDrawer,
-        handleCreate,
-        handleEdit,
-        handleSuccess,
+        activeKey,
         hasPermission,
-        handleDelete,
-        handleCopy,
       }
     },
   })
 </script>
+
+<style lang="less" scoped>
+  .biTabs {
+    .ant-tabs-nav-wrap {
+      padding-left: 24px;
+    }
+  }
+</style>

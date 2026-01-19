@@ -16,7 +16,7 @@ export const getCategoryList = (params = {}) => {
  * 分类列表 - 树状列表
  */
 export const getCategoryTree = (params = {}) => {
-  return defHttp.get({ url: Api.GetCategoryTree, params })
+  return defHttp.get({ url: '/category/tree', params })
 }
 
 /**

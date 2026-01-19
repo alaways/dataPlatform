@@ -53,7 +53,7 @@
         </Row>
       </div>
     </div>
-    <RecordAddModal @register="recordAddModal" @success="handleSuccess" />
+    <RecordAddModal @register="recordAddModal" @success="handleSuccess" :dataSource="dataSource" />
   </BasicModal>
 </template>
 <script lang="ts">
@@ -63,15 +63,19 @@
   import { getTaskRecordList } from '/@/api/collection/task'
   import RecordAddModal from './recordAddModal.vue'
   import { usePermission } from '/@/hooks/web/usePermission'
-
+  const props = {
+    dataSource: String,
+  }
   export default defineComponent({
     name: 'RecordModal',
     components: { BasicModal, Button, Tag, RecordAddModal, Row, Col },
     emits: ['success', 'register'],
-    setup(_, { emit }) {
+    props,
+    setup(props, { emit }) {
       const isTask = ref(false) // 只有催收任务才有的新增
       const isRefresh = ref(false) // 判断是否需要刷新
       const orderId = ref('')
+      const dataSource = ref()
       const type = ref(1) // 1-催收 2-订单"
       const uid = ref('')
       const list = ref<any>([])
@@ -82,6 +86,7 @@
         uid.value = data.record.uid
         isTask.value = data.isTask || false
         type.value = data.type || 1
+        dataSource.value = props.dataSource
         init()
       })
 
@@ -90,6 +95,7 @@
           orderId: orderId.value,
           limit: 999999,
           type: type.value,
+          dataSource: props.dataSource,
         })
         list.value = res.list
         setModalProps({ confirmLoading: false })
@@ -103,6 +109,7 @@
           type,
           orderId,
           uid,
+          dataSource: dataSource.value,
         })
       }
 
@@ -130,6 +137,7 @@
         hasPermission,
         handleCancel,
         type,
+        dataSource,
       }
     },
   })

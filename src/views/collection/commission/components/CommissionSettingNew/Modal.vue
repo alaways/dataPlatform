@@ -62,6 +62,7 @@
       const geForm = ref<any>(null)
       const currentDataSource = ref()
       const { query } = useRoute()
+      console.log(query,'queryShow')
       if (query && query.dataSources) {
         currentDataSource.value = String(query.dataSources)
       }

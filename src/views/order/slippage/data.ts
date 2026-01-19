@@ -11,7 +11,7 @@ import { cityCoding } from '/@/utils/cityData2'
 import { getProsecuteList } from '/@/api/collection/task'
 import { getLegalChannelsList } from '/@/api/collection/legalChannels'
 import { getTextArr } from '/@/utils'
-
+import { dataList } from '/@/views/collection/remit/data'
 const { hasPermission } = usePermission()
 const cityDatas = cloneDeep(cityCoding)
 cityDatas.forEach((v) => {
@@ -65,6 +65,15 @@ export const columns = () => {
           h('br'),
           h('span', {}, signTime),
         ])
+      },
+    },
+    {
+      title: '业务端',
+      dataIndex: 'dataSources',
+      width: 150,
+      customRender: ({ record }) => {
+        const find = dataList.find((item: any) => item.value == record.dataSources)
+        if (find) return find?.label
       },
     },
     {
@@ -371,7 +380,7 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 6 },
   },
   {
-    ifShow: hasPermission('OrdeSlippageFollowBy'),
+    // ifShow: hasPermission('OrdeSlippageFollowBy'),
     field: 'followBy',
     label: '跟进人',
     colProps: { span: 6 },
@@ -411,6 +420,16 @@ export const searchFormSchema: FormSchema[] = [
     },
     colProps: { span: 6 },
   },
+  // {
+  //   field: 'dataSources',
+  //   label: '业务数据',
+  //   component: 'Select',
+  //   defaultValue: 'xx',
+  //   componentProps: {
+  //     options: dataList,
+  //   },
+  //   colProps: { span: 8 },
+  // },
 ]
 
 /**

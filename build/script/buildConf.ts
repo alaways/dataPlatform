@@ -42,6 +42,7 @@ function createConfig(params: CreateConfigParams) {
 
 export function runBuildConfig() {
   const config = getEnvConfig();
+  console.log(config, '我是控制台config')
   const configFileName = getConfigFileName(config);
   createConfig({ config, configName: configFileName, configFileName: GLOB_CONFIG_FILE_NAME });
 }

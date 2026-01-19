@@ -8,3 +8,8 @@ export function handleMonth() {
   const lastMonthSameDay = today.subtract(1, 'month')
   return [lastMonthSameDay.format('YYYY-MM-DD'), today.format('YYYY-MM-DD')]
 }
+export function handleMonth1() {
+  const today = dayjs()
+  const lastMonthSameDay = today.subtract(30, 'day')
+  return [lastMonthSameDay.format('YYYY-MM-DD'), today.format('YYYY-MM-DD')]
+}

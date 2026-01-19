@@ -4,6 +4,10 @@ import { FormSchema } from '/@/components/Table'
 import { formatNumber } from '/@/utils/tool'
 import { usePermission } from '/@/hooks/web/usePermission'
 import { Tag } from 'ant-design-vue'
+import { getProsecuteList } from '/@/api/collection/task'
+import { getLegalChannelsList } from '/@/api/collection/legalChannels'
+import { getUserList } from '/@/api/system/account'
+
 const { hasPermission } = usePermission()
 
 export const columns: BasicColumn[] = [
@@ -111,17 +115,49 @@ export const columns: BasicColumn[] = [
     customRender: ({ text }) => text || '-',
   },
 ]
-const dataList = [
-  { label: '全部', value: 'all' },
+export const dataList = [
   { label: '线下', value: 'xx' },
   { label: '线上', value: 'xs' },
-  { label: '零零享租', value: 'llxz' },
+  { label: '零零享租', value: 'llsz' },
   { label: '俏租机', value: 'qzj' },
 ]
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'receiveTime',
-    label: '时间筛选',
+    field: 'orderSn',
+    label: '订单编号',
+    component: 'Input',
+    colProps: { span: 8 },
+  },
+  {
+    field: 'nickName',
+    label: '姓名',
+    component: 'Input',
+    colProps: { span: 8 },
+  },
+  {
+    field: 'phone',
+    label: '手机号',
+    component: 'Input',
+    colProps: { span: 8 },
+  },
+  {
+    field: 'followBy',
+    label: '跟进人',
+    colProps: { span: 8 },
+    component: 'ApiSelect',
+    componentProps: {
+      showSearch: true,
+      placeholder: '请选择跟进人',
+      api: getUserList,
+      params: { limit: 999999, status: '1' },
+      resultField: 'list',
+      labelField: 'userName',
+      valueField: 'uid',
+    },
+  },
+  {
+    field: 'payTime',
+    label: '还款时间',
     component: 'RangePicker',
     componentProps: {
       valueFormat: 'YYYY-MM-DD',
@@ -130,14 +166,53 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 8 },
   },
   {
-    field: 'dataSources',
-    label: '业务数据',
-    component: 'Select',
-    defaultValue: 'all',
+    field: 'receiveTime',
+    label: '领取时间',
+    component: 'RangePicker',
     componentProps: {
-      options: dataList,
+      valueFormat: 'YYYY-MM-DD',
+      placeholder: ['开始日期', '结束日期'],
     },
     colProps: { span: 8 },
   },
+  {
+    label: '起诉进度',
+    field: 'prosecuteStatus',
+    colProps: { span: 6 },
+    component: 'ApiSelect',
+    componentProps: {
+      showSearch: true,
+      placeholder: '请选择',
+      api: getProsecuteList,
+      params: { cursor: 999999, status: 1 },
+      resultField: 'list',
+      labelField: 'name',
+      valueField: 'code',
+    },
+  },
+  {
+    label: '法诉渠道',
+    field: 'lawsuitId',
+    colProps: { span: 6 },
+    component: 'ApiSelect',
+    componentProps: {
+      showSearch: true,
+      placeholder: '请选择',
+      api: getLegalChannelsList,
+      params: { cursor: 999999, status: 1 },
+      resultField: 'list',
+      labelField: 'name',
+      valueField: 'id',
+    },
+  },
+  // {
+  //   field: 'dataSources',
+  //   label: '业务数据',
+  //   component: 'Select',
+  //   defaultValue: 'xx',
+  //   componentProps: {
+  //     options: dataList,
+  //   },
+  //   colProps: { span: 8 },
+  // },
 ]
-

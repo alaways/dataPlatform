@@ -3,7 +3,7 @@ import { BasicColumn } from '/@/components/Table'
 import { FormSchema } from '/@/components/Table'
 import { useMessage } from '/@/hooks/web/useMessage'
 import { h } from 'vue'
-import { updateCommissionStatusItem } from '/@/api/collection/commission'
+import { updateCommissionStatusItem, changeConfigStatus } from '/@/api/collection/commission'
 import { usePermission } from '/@/hooks/web/usePermission'
 import { getUserList } from '/@/api/system/account'
 const { hasPermission } = usePermission()
@@ -99,12 +99,46 @@ export const pageColumns: BasicColumn[] = [
     dataIndex: 'createTime',
     customRender: ({ text }) => text || '-',
   },
+  // {
+  //   title: '启用状态',
+  //   dataIndex: 'status',
+  //   width: 100,
+  //   customRender: ({ text }) =>
+  //     h(Tag, { color: text ? 'green' : 'red' }, text ? '已启用' : '已禁用'),
+  // },
   {
-    title: '启用状态',
+    // ifShow: hasPermission('CollectionCommissionUpdateStatus'),
+    title: '状态',
     dataIndex: 'status',
     width: 100,
-    customRender: ({ text }) =>
-      h(Tag, { color: text ? 'green' : 'red' }, text ? '已启用' : '已禁用'),
+    fiexd: 'rignt',
+    customRender: ({ record }) => {
+      if (!Reflect.has(record, 'status')) {
+        record.status = false
+      }
+      return h(Switch, {
+        checked: record.status === 1,
+        checkedChildren: '已启用',
+        unCheckedChildren: '已禁用',
+        loading: record.pendingStatus,
+        onChange(checked: boolean) {
+          record.pendingStatus = true
+          const newStatus = checked ? 1 : 0
+          const { createMessage } = useMessage()
+          changeConfigStatus({ id: record.id, status: newStatus })
+            .then(() => {
+              record.status = newStatus
+              createMessage.success(record.status === 1 ? `已启用` : '已禁用')
+            })
+            .catch(() => {
+              createMessage.error('修改状态失败')
+            })
+            .finally(() => {
+              record.pendingStatus = false
+            })
+        },
+      })
+    },
   },
 ]
 export const userFormSchema: FormSchema[] = [

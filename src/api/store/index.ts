@@ -1,4 +1,4 @@
-import { defHttp } from '/@/utils/http/axios'
+import { defHttp, defHttpOffline } from '/@/utils/http/axios'
 
 enum Api {
   GetStoreList = '/merchant/manage/account/page',
@@ -11,7 +11,7 @@ enum Api {
  * 商户列表 - 列表
  */
 export const getStoreList = (params) => {
-  return defHttp.get({ url: Api.GetStoreList, params })
+  return defHttpOffline.get({ url: Api.GetStoreList, params })
 }
 
 /**

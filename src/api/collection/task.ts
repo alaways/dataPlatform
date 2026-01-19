@@ -91,7 +91,7 @@ export const getCollectsStatusList = (params = {}) => {
  */
 export const batchLock = (data = {}) => {
   return defHttp.post(
-    { url: `/collects/lock/batch?taskIds=${data.taskIds}&lock=${data.lock}`, data },
+    { url: `/collects/lock/batch?taskIds=${data.taskIds}&lock=${data.lock}&dataSources=${data.dataSources}`, data },
     { isReturnNativeResponse: true },
   )
 }

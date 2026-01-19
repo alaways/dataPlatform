@@ -31,6 +31,10 @@ export const updateCommissionItem = (data: any) => {
 export const updateCommissionStatusItem = (data: any) => {
   return defHttp.put({ url: `${Api.SetCommission}/${data.id}/${data.status}` })
 }
+export const changeConfigStatus = (data: any) => {
+  return defHttp.get({ url: `/collects/config/status/${data.id}/${data.status}` })
+}
+
 /**
  * 提成设置列表 - 删除
  */
@@ -73,11 +77,11 @@ export const getRuleSetting = (params: any) => {
 /**
  * 催收规则设置 - 修改
  */
-export const setRuleSetting = (data) => {
+export const setRuleSetting = (data, dataSources) => {
   return defHttp.post({
     url: `/saveConfig`,
     data: {
-      label: 'collection.config',
+      label: dataSources + '.collection.config',
       val: JSON.stringify(data),
     },
     headers: { 'Content-Type': ContentTypeEnum.FORM_URLENCODED },

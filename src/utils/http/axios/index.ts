@@ -17,17 +17,23 @@ import { useI18n } from '/@/hooks/web/useI18n'
 import { joinTimestamp, formatRequestDate } from './helper'
 import { useUserStoreWithOut } from '/@/store/modules/user'
 import { AxiosRetry } from '/@/utils/http/axios/axiosRetry'
+import { useUserStore } from '/@/store/modules/user'
 
 const globSetting = useGlobSetting()
 const urlPrefix = globSetting.urlPrefix
 const { createMessage, createErrorModal } = useMessage()
-const checkFn = (url: any, key: string) => {
-  console.log(url, key, 'checkFnKEY')
-  return url?.indexOf(key) > -1
+const checkFn = (url: any, keys: Array<string>) => {
+  return keys?.find((item: any) => url?.indexOf(item) > -1)
 }
 const OFFLINE = '/offline'
+const ONLINE = '/mayiApi'
 // 租机的生产域名
-const NEWADMINAPI = 'https://admin.gsrental.cn/api'
+// 接口请求API
+export const NEWADMINAPI = 'https://admin.gsrental.cn/api'
+export const MAYIAPI = 'https://admin.gsrental.cn/mayiApi'
+// 域名
+export const HOSTNEW = 'https://admin.gsrental.cn/newAdmin/'
+export const HOSTMAYI = 'https://admin.gsrental.cn/mayiAdmin/'
 
 /**
  * @description: 数据处理，方便区分多种处理方式
@@ -43,11 +49,14 @@ const transform: AxiosTransform = {
     if (isReturnNativeResponse) {
       return res
     }
+    console.log(isTransformResponse, res, '我还执行了 00')
     // 不进行任何处理，直接返回
     // 用于页面代码可能需要直接获取code，data，message这些信息时开启
     if (!isTransformResponse) {
+      console.log(isTransformResponse, res.data, '我还执行了')
       return res.data
     }
+    
     // 错误的时候返回
 
     const { data } = res
@@ -143,8 +152,22 @@ const transform: AxiosTransform = {
         config.params = undefined
       }
     }
-    if (checkFn(urlPrefix, OFFLINE)) {
-      config.url = `${config.url?.replace(OFFLINE, '')}`
+    if (checkFn(urlPrefix, [OFFLINE, ONLINE])) {
+      
+      // 生产环境
+      if (location.href.indexOf('https://dataplatform.gsrental.cn/') > -1) {
+        if (OFFLINE) config.url = `${config.url?.replace(OFFLINE, '')}`
+        if (ONLINE) config.url = `${config.url?.replace(ONLINE, '')}`
+       
+      } else {
+        if (OFFLINE) config.url = `${config.url?.replace(OFFLINE, '')}`
+        if (ONLINE) config.url = `${config.url?.replace(ONLINE, '')}`
+        console.log('config.url', config)
+        // config.url = 'http://192.168.1.11:8080'
+        // TODO
+        config.url = config.url.replace('https://admin.gsrental.cn', 'https://admin.gsrental.cn')
+        //http://192.168.1.11:8080
+      }
     }
     return config
   },
@@ -154,7 +177,14 @@ const transform: AxiosTransform = {
    */
   requestInterceptors: (config, options) => {
     // 请求之前处理config
-    const token = getToken()
+    console.log(config.url, '请求拦截config')
+    let token = getToken()
+    if (config.url?.indexOf('mayiApi') > -1) {
+      const AllToken = localStorage.getItem('AllToken') ? JSON.parse(localStorage.getItem('AllToken')) : null
+      if (AllToken) {
+        token = 'Bearer ' + AllToken?.mayi || getToken()
+      }
+    }
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       // jwt token
       ;(config as Recordable).headers.Authorization = options.authenticationScheme
@@ -168,7 +198,6 @@ const transform: AxiosTransform = {
     if (apiBase && !isAdmin()) {
       ;(config as Recordable).headers['environment-name'] = apiBase
     }
-    console.log(config,'LANJIECONFIG')
     return config
   },
 
@@ -226,15 +255,21 @@ const transform: AxiosTransform = {
 const getCutHost = (hostItem: string) => {
   const HOSTOBJ: any = {}
   HOSTOBJ[OFFLINE] = NEWADMINAPI
-  console.log(HOSTOBJ[hostItem], HOSTOBJ, hostItem, 'configSHow')
+  HOSTOBJ[ONLINE] = MAYIAPI
   return HOSTOBJ[hostItem]
 }
 function createAxios(opt?: Partial<CreateAxiosOptions>) {
   const _urlPrefix: any = opt?.requestOptions?.urlPrefix
-  console.log(getCutHost(_urlPrefix), globSetting.apiUrl, 'configSHow')
-
-  const isChecked = checkFn(_urlPrefix, OFFLINE)
-  return new VAxios(
+  const isChecked = checkFn(_urlPrefix, [OFFLINE, ONLINE])
+  
+  let optionHeader = {}
+  const uinfo = localStorage.getItem('USERINFO') ? JSON.parse(localStorage.getItem('USERINFO')) : null
+  if (isChecked && uinfo?.uid == '42398518') {
+    optionHeader['X-Data-Source'] = 'slave'
+  } else {
+    optionHeader['X-Data-Source'] = 'master'
+  }
+  const vaxios = new VAxios(
     // 深度合并
     deepMerge(
       {
@@ -246,7 +281,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
         // 基础接口地址
         // baseURL: globSetting.apiUrl,
 
-        headers: { 'Content-Type': ContentTypeEnum.JSON },
+        headers: { 'Content-Type': ContentTypeEnum.JSON , ...optionHeader},
         // 如果是form-data格式
         // headers: { 'Content-Type': ContentTypeEnum.FORM_URLENCODED },
         // 数据处理方式
@@ -289,19 +324,27 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
       opt || {},
     ),
   )
+  console.log(vaxios,'vaxiosShow')
+  return vaxios
 }
 export const defHttp = createAxios()
-
+const urlPix = urlPrefix
+// 如果是生产
+// if (window.location.href.indexOf('dataplatform.gsrental.cn') > -1) {
+//   urlPix = '/api'
+// } else {
+//   urlPix = '/dataplatformApi'
+// }
 export const defHttp2 = createAxios({
   requestOptions: {
-    urlPrefix: '/api',
+    urlPrefix: `${urlPix}`,
     // urlPrefix: '/api2',
   },
 })
 
 export const defHttpV3 = createAxios({
   requestOptions: {
-    urlPrefix: '/api/v3',
+    urlPrefix: `${urlPix}/v3`,
   },
 })
 export const defHttpRisk = createAxios({
@@ -314,7 +357,11 @@ export const defHttpOffline = createAxios({
     urlPrefix: OFFLINE,
   },
 })
-
+export const defHttpOnline = createAxios({
+  requestOptions: {
+    urlPrefix: ONLINE,
+  },
+})
 // other api url
 // export const otherHttp = createAxios({
 //   requestOptions: {

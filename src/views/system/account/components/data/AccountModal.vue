@@ -59,7 +59,7 @@
             appletValue:
               (data.record.appletValue && String(data.record.appletValue).split(',')) || [],
             postId: (data.record.postId && String(data.record.postId).split(',')) || [],
-            roleId: (data.record.roleId && String(data.record.roleId).split(',')) || [],
+            roleId: '4' || (data.record.roleId && String(data.record.roleId).split(',')) || [],
             merchantTerminalNo:
               (data.record.merchantTerminalNo &&
                 String(data.record.merchantTerminalNo).split(',')) ||
@@ -126,9 +126,19 @@
         try {
           const values = await validate()
           const formValues = cloneDeep(values)
+          const offlineUid = formValues['offlineUid']
+          const onlineUid = formValues['onlineUid']
+          // formValues.loginUid = JSON.stringify({
+          //   mayi: onlineUid,
+          //   newAdmin: offlineUid,
+          // })
           // formValues['deptId'] = (values.deptId && values.deptId.join(',')) || ''
           formValues['postId'] = (values.postId && values.postId.join(',')) || ''
-          formValues['roleId'] = (values.roleId && values.roleId.join(',')) || ''
+          if (values.roleId && typeof values.roleId == 'string') {
+            formValues['roleId'] = values.roleId || ''
+          } else {
+            formValues['roleId'] = (values.roleId && values.roleId?.join(',')) || ''
+          }
           formValues['appletValue'] = (values.appletValue && values.appletValue.join(',')) || ''
           formValues['salespersonValue'] =
             (values.salespersonValue && values.salespersonValue.join(',')) || ''

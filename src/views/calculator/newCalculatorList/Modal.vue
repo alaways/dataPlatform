@@ -82,7 +82,6 @@
           const values = await validate()
           const newForm = cloneDeep(values)
           delete newForm.regionIds
-          console.log(newForm, 'newForm')
           setModalProps({ confirmLoading: true })
           if (interestRateTableRef.value) {
             const table = interestRateTableRef.value.getDataSource()

@@ -10,6 +10,12 @@ export const platform = [
   { value: 5, label: '支付宝小程序' },
   { value: 6, label: '线下' },
 ]
+// 取消类型
+export const cancelObj = {
+  1: '用户取消',
+  2: '后台取消',
+  3: '系统自动取消',
+}
 /**
  * 全部订单的筛选状态
  */

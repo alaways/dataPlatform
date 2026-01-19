@@ -270,8 +270,10 @@ export const usePermissionStore = defineStore({
           // }
 
           try {
-            const mdata: any = await getMenuList({ status: 1 })
+            let mdata: any = await getMenuList({ status: 1 })
+            mdata = mdata.filter(item => item.menuId != '0')
             // 获取父级层
+            console.log(mdata, 'mdataShow')
             const menuList = mdata.filter((v) => !v.parentId || v.parentId == 0)
             // 处理数据
             function filterTree(data) {

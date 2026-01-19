@@ -33,7 +33,6 @@
   "dependencies": {
     "@ant-design/colors": "^6.0.0",
     "@ant-design/icons-vue": "^6.1.0",
-    "@ant-design/plots": "^2.5.0",
     "@iconify/iconify": "^2.2.1",
     "@logicflow/core": "^1.1.13",
     "@logicflow/extension": "^1.1.13",
@@ -41,8 +40,6 @@
     "@vue/shared": "^3.2.33",
     "@vueuse/core": "^8.3.0",
     "@vueuse/shared": "^8.3.0",
-    "@wangeditor/editor": "^5.1.23",
-    "@wangeditor/editor-for-vue": "^5.1.12",
     "@zxcvbn-ts/core": "^2.0.1",
     "ant-design-vue": "3.2.20",
     "axios": "^0.26.1",

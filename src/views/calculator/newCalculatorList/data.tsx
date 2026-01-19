@@ -132,14 +132,12 @@ export const userFormSchema: FormSchema[] = [
         onChange: (e: any, v: any) => {
           if (v && v.length) {
             // const len = e.length
-            console.log(e, v, 'evShow')
             formModel.provinceRegionId = v[0].value
             formModel.provinceRegionName = v[0]?.label
             formModel.cityRegionId = v[1].value
             formModel.cityRegionName = v[1]?.label
             formModel.boroughId = v[2]?.value
             formModel.boroughName = v[2]?.label
-            console.log(formModel)
           }
         },
       }

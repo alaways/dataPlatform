@@ -100,3 +100,15 @@ export const getTextArr = (objStatus: any) => {
   })
   return textArr?.join('/')
 }
+//获取蚂蚁的token
+export const getMayiToken = () => {
+  const AllToken = localStorage.getItem('AllToken') ? JSON.parse(localStorage.getItem('AllToken')) : null
+  const mayiToken = AllToken?.mayi
+  return mayiToken
+}
+//获取线下的token
+export const getNewToken = () => {
+  const AllToken = localStorage.getItem('AllToken') ? JSON.parse(localStorage.getItem('AllToken')) : null
+  const newToken = AllToken?.newAdmin
+  return newToken
+}

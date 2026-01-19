@@ -11,7 +11,7 @@ import { cityCoding } from '/@/utils/cityData2'
 import { Tag } from 'ant-design-vue'
 import { getTextArr } from '/@/utils'
 const { hasPermission } = usePermission()
-
+import { dataList } from '/@/views/collection/remit/data'
 const repayDateDefultValue = handleCurrentoDays(0)
 
 const cityDatas = cloneDeep(cityCoding)
@@ -48,6 +48,15 @@ export const columns = () => {
           h('br'),
           h('span', {}, signTime),
         ])
+      },
+    },
+    {
+      title: '业务端',
+      dataIndex: 'dataSources',
+      width: 150,
+      customRender: ({ record }) => {
+        const find = dataList.find((item: any) => item.value == record.dataSources)
+        if (find) return find?.label
       },
     },
     {
@@ -225,21 +234,27 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    ifShow: hasPermission('OrdeSoonSalesperson'),
+    field: 'salesperson',
     label: '业务员',
-    field: 'salespersonId',
-    component: 'ApiSelect',
+    component: 'Input',
     colProps: { span: 6 },
-    componentProps: {
-      showSearch: true,
-      placeholder: '请选择',
-      api: getSalespersonStoreList,
-      params: { pageSize: 999999, cursor: 999999 },
-      resultField: 'list',
-      labelField: 'name',
-      valueField: 'id',
-    },
   },
+  // {
+  //   ifShow: hasPermission('OrdeSoonSalesperson'),
+  //   label: '业务员',
+  //   field: 'salespersonId',
+  //   component: 'ApiSelect',
+  //   colProps: { span: 6 },
+  //   componentProps: {
+  //     showSearch: true,
+  //     placeholder: '请选择',
+  //     api: getSalespersonStoreList,
+  //     params: { pageSize: 999999, cursor: 999999 },
+  //     resultField: 'list',
+  //     labelField: 'name',
+  //     valueField: 'id',
+  //   },
+  // },
   {
     field: 'city',
     label: '地区',
@@ -267,4 +282,14 @@ export const searchFormSchema: FormSchema[] = [
     },
     colProps: { span: 6 },
   },
+  // {
+  //   field: 'dataSources',
+  //   label: '业务数据',
+  //   component: 'Select',
+  //   defaultValue: 'xx',
+  //   componentProps: {
+  //     options: dataList,
+  //   },
+  //   colProps: { span: 8 },
+  // },
 ]

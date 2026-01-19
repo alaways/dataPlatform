@@ -20,6 +20,7 @@
       :rowClassName="getRowClassName"
       v-show="getEmptyDataIsShowTable"
       @change="handleTableChange"
+      @resizeColumn="handleResizeColumn"
     >
       <template #[item]="data" v-for="item in Object.keys($slots)" :key="item">
         <slot :name="item" v-bind="data || {}"></slot>
@@ -89,6 +90,7 @@
       'expanded-rows-change',
       'change',
       'columns-change',
+      'resizeColumn',
     ],
     setup(props, { attrs, emit, slots, expose }) {
       const tableElRef = ref(null)
@@ -159,7 +161,9 @@
         },
         emit,
       )
-
+      function handleResizeColumn(args, col) {
+        emit('resizeColumn', { w: args, col })
+      }
       function handleTableChange(...args) {
         onTableChange.call(undefined, ...args)
         emit('change', ...args)
@@ -326,6 +330,7 @@
         getFormSlotKeys,
         getWrapperClass,
         columns: getViewColumns,
+        handleResizeColumn,
       }
     },
   })

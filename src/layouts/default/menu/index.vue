@@ -94,6 +94,7 @@
 
       const getCommonProps = computed(() => {
         const menus = unref(menusRef)
+        console.log(menus, 'menusSss')
         return {
           menus,
           beforeClickFn: beforeMenuClickFn,

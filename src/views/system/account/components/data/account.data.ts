@@ -6,11 +6,10 @@ import { useMessage } from '/@/hooks/web/useMessage'
 import { updateUserItem } from '/@/api/system/account'
 import { getRoleList } from '/@/api/system/role'
 import { getDeptList } from '/@/api/system/dept'
-import { getPostList } from '/@/api/system/post'
 import { useUserStore } from '/@/store/modules/user'
 // import { getAppList } from '/@/api/saas/app'
 // import { getProductList } from '/@/api/saas/product'
-import { getSalespersonStoreList } from '/@/api/business/salesperson'
+// import { getSalespersonStoreList } from '/@/api/business/salesperson'
 export const columns: BasicColumn[] = [
   {
     title: '登录名',
@@ -43,6 +42,11 @@ export const columns: BasicColumn[] = [
   //   customRender: ({ text }) => text || '-',
   // },
   {
+    title: '关联小程序',
+    dataIndex: 'appletValue',
+    customRender: ({ text }) => text || '-',
+  },
+  {
     title: '角色',
     dataIndex: 'roleValue',
     customRender: ({ text }) => text || '-',
@@ -50,6 +54,11 @@ export const columns: BasicColumn[] = [
   {
     title: '所属部门',
     dataIndex: 'deptValue',
+    customRender: ({ text }) => text || '-',
+  },
+  {
+    title: '岗位',
+    dataIndex: 'postValue',
     customRender: ({ text }) => text || '-',
   },
   {
@@ -121,6 +130,12 @@ export const accountFormSchema: FormSchema[] = [
     show: false,
   },
   {
+    field: 'loginUid',
+    label: 'loginUid',
+    component: 'Input',
+    show: false,
+  },
+  {
     field: 'uid',
     label: 'UID',
     component: 'Input',
@@ -159,6 +174,9 @@ export const accountFormSchema: FormSchema[] = [
       showSearch: true,
       placeholder: '请选择角色',
       api: getRoleList,
+      afterFetch: (data) => {
+        return data.list
+      },
       params: { limit: 999999, status: '1' },
       resultField: 'list',
       labelField: 'roleName',
@@ -183,6 +201,70 @@ export const accountFormSchema: FormSchema[] = [
       },
     },
   },
+  // {
+  //   field: 'postId',
+  //   label: '岗位',
+  //   component: 'ApiSelect',
+  //   colProps: { span: 20 },
+  //   componentProps: {
+  //     mode: 'multiple',
+  //     showSearch: true,
+  //     placeholder: '请选择岗位',
+  //     params: { status: '1' },
+  //     api: getPostList,
+  //     resultField: 'list',
+  //     labelField: 'postName',
+  //     valueField: 'postId',
+  //   },
+  // },
+  // {
+  //   field: 'salespersonValue',
+  //   label: '关联业务员',
+  //   component: 'ApiSelect',
+  //   colProps: { span: 20 },
+  //   componentProps: {
+  //     api: getSalespersonStoreList,
+  //     params: { pageSize: 999999, cursor: 999999 },
+  //     mode: 'multiple',
+  //     showSearch: true,
+  //     placeholder: '请选择业务员',
+  //     resultField: 'list',
+  //     labelField: 'name',
+  //     valueField: 'id',
+  //   },
+  // },
+  {
+    field: 'appletValue',
+    label: '关联小程序',
+    component: 'Select',
+    colProps: { span: 20 },
+    // componentProps: {
+    //   params: { limit: '999999' },
+    //   mode: 'multiple',
+    //   showSearch: true,
+    //   placeholder: '请选择小程序',
+    //   api: getAppList,
+    //   resultField: 'list',
+    //   labelField: 'appletName',
+    //   valueField: 'appletCode',
+    // },
+  },
+  {
+    field: 'merchantTerminalNo',
+    label: '平台端',
+    component: 'Select',
+    colProps: { span: 20 },
+    // slot: 'merchantTerminalNo',
+    // componentProps: {
+    //   mode: 'multiple',
+    //   showSearch: true,
+    //   placeholder: '请选择平台',
+    //   api: getProductList,
+    //   resultField: 'list',
+    //   labelField: 'merchantTerminalName',
+    //   valueField: 'merchantTerminalNo',
+    // },
+  },
   {
     field: 'status',
     label: '状态',
@@ -197,6 +279,46 @@ export const accountFormSchema: FormSchema[] = [
       ],
     },
   },
+  // {
+  //   field: 'offlineUid',
+  //   label: '关联线下员工账号',
+  //   labelWidth: 150,
+  //   component: 'ApiSelect',
+  //   colProps: { span: 20 },
+  //   componentProps: {
+  //     showSearch: true,
+  //     placeholder: '请选择员工',
+  //     api: getRoleListForNew,
+  //     afterFetch: (data) => {
+  //       console.log(data, '线下员工数据x')
+  //       return data.list || []
+  //     },
+  //     params: { limit: 999999, status: '1' },
+  //     resultField: 'list',
+  //     labelField: 'userName',
+  //     valueField: 'uid',
+  //   },
+  // },
+  // {
+  //   field: 'onlineUid',
+  //   label: '关联线下员工账号',
+  //   labelWidth: 150,
+  //   component: 'ApiSelect',
+  //   colProps: { span: 20 },
+  //   componentProps: {
+  //     showSearch: true,
+  //     placeholder: '请选择员工',
+  //     api: getRoleListForMayi,
+  //     afterFetch: (data) => {
+  //       console.log(data, '线下员工数据x')
+  //       return data.list || []
+  //     },
+  //     params: { limit: 999999, status: '1' },
+  //     resultField: 'list',
+  //     labelField: 'userName',
+  //     valueField: 'uid',
+  //   },
+  // },
 ]
 
 export const passwordFormSchema: FormSchema[] = [

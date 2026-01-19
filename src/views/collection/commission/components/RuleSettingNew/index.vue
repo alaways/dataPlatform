@@ -240,7 +240,8 @@
       delete fromValues.seat1
       console.log(fromValues)
       fromValues.dataSources = currentDataSource.value
-      await setRuleSetting(fromValues)
+      
+      await setRuleSetting(fromValues, currentDataSource.value)
       createMessage.success('保存成功')
       loading.value = false
     } catch (e) {

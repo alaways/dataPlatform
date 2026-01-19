@@ -290,6 +290,7 @@ export function useDataSource(
       rawDataSourceRef.value = res
 
       const isArrayResult = Array.isArray(res)
+      // let resultItems = res
       let resultItems: Recordable[] = isArrayResult ? res : get(res, listField)
       const resultTotal: number = isArrayResult ? 0 : get(res, totalField)
 
@@ -305,9 +306,13 @@ export function useDataSource(
       }
 
       if (afterFetch && isFunction(afterFetch)) {
-        resultItems = (await afterFetch(resultItems)) || resultItems
+        if (Array?.isArray(res?.data)) {
+          resultItems = (await afterFetch(res?.data)) || resultItems
+        } else {
+          resultItems = (await afterFetch(resultItems)) || resultItems
+        }
       }
-      console.log(resultItems, 'resultItems')
+      console.log(resultItems, isArrayResult, res, 'resultItems')
       dataSourceRef.value = resultItems
       setPagination({
         total: resultTotal || 0,

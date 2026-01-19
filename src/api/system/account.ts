@@ -1,4 +1,4 @@
-import { defHttp } from '/@/utils/http/axios'
+import { defHttp, defHttpOnline, defHttpOffline } from '/@/utils/http/axios'
 
 enum Api {
   GetUserList = '/v3/sysNewUser/page',
@@ -15,6 +15,19 @@ enum Api {
  */
 export const getUserList = (params) => {
   return defHttp.get({ url: Api.GetUserList, params })
+}
+
+/**
+ * 角色列表 - 列表 线上
+ */
+export const getRoleListForMayi = (params: any) => {
+  return defHttpOnline.get({ url: Api.GetUserList, params })
+}
+/**
+ * 角色列表 - 列表 线下
+ */
+export const getRoleListForNew = (params: any) => {
+  return defHttpOffline.get({ url: Api.GetUserList, params })
 }
 /**
  * 账号列表 - 添加

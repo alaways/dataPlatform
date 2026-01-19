@@ -28,7 +28,7 @@
     setup(_, { emit }) {
       const isUpdate = ref(true)
       const name = ref('')
-
+      const dataSources = ref(null)
       const { createMessage } = useMessage()
 
       const [registerForm, { setFieldsValue, resetFields, validate }] = useForm({
@@ -46,7 +46,8 @@
         isUpdate.value = !!data?.isUpdate
         name.value = data.name
         const storeMerchantId = data.record?.storeMerchantId || 0
-
+        console.log(data.record,'dataReocrdShow')
+        dataSources.value = data?.record?.dataSources
         if (unref(isUpdate)) {
           setFieldsValue({
             name,
@@ -78,6 +79,9 @@
           }
           if (formValue.prosecuteStatus == 1) {
             formValue['prosecuteFiles'] = handleImage(values.prosecuteFiles)
+          }
+          if (dataSources.value) {
+            formValue.dataSources = dataSources.value
           }
           setModalProps({ confirmLoading: true })
           // TODO custom api

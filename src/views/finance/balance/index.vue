@@ -200,13 +200,17 @@
 
         const mlist = await getStoreList({ pageSize: 999999, limit: 999999 })
         merchantCodeList.value = mlist.list
-
+        const kongObj = {
+          merchantCode: 'empty',
+          merchantName: '查询空商家',
+        }
+        console.log([kongObj, ...merchantCodeList.value], 'list商家数据')
         form.updateSchema([
           {
             field: 'merchantCode',
             componentProps: {
               placeholder: '请选择',
-              options: merchantCodeList.value,
+              options: [kongObj, ...merchantCodeList.value],
               fieldNames: {
                 label: 'merchantName',
                 value: 'merchantCode',

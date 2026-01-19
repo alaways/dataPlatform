@@ -1,4 +1,4 @@
-import { defHttp } from '/@/utils/http/axios'
+import { defHttp, defHttpOnline } from '/@/utils/http/axios'
 
 enum Api {
   GetOperatorStoreList = '/v3/sysNewUser/riskAuditStatistics',
@@ -11,7 +11,10 @@ enum Api {
 export const getOperatorStoreList = (params = {}) => {
   return defHttp.get({ url: Api.GetOperatorStoreList, params })
 }
-
+// export const getOperatorStoreList = (params = {}) => {
+//   return defHttp.get({ url: Api.GetOperatorStoreList, params })
+// }
+// defHttpOnline
 /**
  * 导出
  */

@@ -17,8 +17,8 @@ const { hasPermission } = usePermission()
 //   { color: 'red', label: '停机/空号', value: 6 },
 // ]
 const tabsList = [
-  { tab: '诉讼中', key: '1' },
-  { tab: '新派单', key: '2' },
+  { name: '诉讼中', code: '1' },
+  { name: '新派单', code: '2' },
 ]
 export const searchFormSchema = [
   {
@@ -99,21 +99,6 @@ export const searchFormSchema = [
     colProps: { span: 6 },
   },
   {
-    label: '催收状态',
-    field: 'status',
-    colProps: { span: 6 },
-    component: 'ApiSelect',
-    componentProps: {
-      showSearch: true,
-      placeholder: '请选择',
-      api: getCollectsStatusList,
-      params: { cursor: 999999, status: 1 },
-      resultField: 'list',
-      labelField: 'name',
-      valueField: 'code',
-    },
-  },
-  {
     field: 'overdueDays',
     label: '逾期天数',
     component: 'Input',
@@ -176,10 +161,12 @@ export const searchFormSchema = [
     field: 'tabCode',
     label: '催收状态',
     component: 'ApiSelect',
+    defaultValue: '2',
     componentProps: {
       showSearch: true,
       placeholder: '请选择',
       initProps: tabsList,
+      allowClear: false,
       api: getCollectsStatusList,
       params: { cursor: 999999, status: 1, isNew: 1 },
       resultField: 'list',

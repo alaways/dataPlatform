@@ -71,7 +71,6 @@
         { label: '折扣/减免', key: 'discount' },
       ])
       const baseMenuItem = (aStatus, bStatus) => {
-        console.log(aStatus, bStatus, 'statusAB')
         if (aStatus && !bStatus) {
           activeKey.value = 'pay'
           menuList.value = menuList.value.filter((item: any) => item.key === 'pay')
@@ -131,7 +130,6 @@
         totalAmountBackups.value = data.record?.totalAmount
         payShow.value = data.record?.payShow
         data.record['billItemSn'] = handleBillItemSnSort(data.record?.billItemSn)
-        console.log('data.record ', data.record)
 
         // let downPayAmounts = 0
         // // 账单 列表
@@ -148,7 +146,6 @@
         //   downPayAmounts = downPayAmounts / 100
         // }
         let downPayAmounts = 0
-        console.log('downPayAmounts  ', downPayAmounts)
 
         updateSchema({
           field: 'totalAmount',
@@ -156,7 +153,6 @@
         })
         if (data.record?.status == 401) {
           downPayAmounts = data.record?.totalAmount
-          console.log('downPayAmounts12  ', downPayAmounts)
           updateSchema({
             label: '线下收款金额',
             field: 'totalAmount',
@@ -248,8 +244,6 @@
 
                   // 如果金额小于首付则不显示二维码
                   const downPayAmounts = formModel['downPayAmounts'] || 0
-                  console.log('totalAmount ', totalAmount)
-                  console.log('downPayAmounts ', downPayAmounts)
                   if (value == 1 && totalAmount >= downPayAmounts) {
                     const params = { ...formModel, totalAmount: floatToIntNumber(totalAmount) }
                     const res = await getUploadAuthcode(params)

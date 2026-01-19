@@ -83,6 +83,7 @@ export const useUserStore = defineStore({
     setUserInfo(info: UserInfo | null) {
       this.userInfo = info
       this.lastUpdateTime = new Date().getTime()
+      localStorage.setItem('USERINFO', JSON.stringify(info))
       setAuthCache(USER_INFO_KEY, info)
     },
     setSessionTimeout(flag: boolean) {
@@ -136,6 +137,9 @@ export const useUserStore = defineStore({
           router.addRoute(PAGE_NOT_FOUND_ROUTE as unknown as RouteRecordRaw)
           permissionStore.setDynamicAddedRoute(true)
         }
+        setTimeout(() => {
+          window.location.reload()
+        }, 800)
         goHome && (await router.replace(userInfo?.homePath || PageEnum.BASE_HOME))
       }
       return userInfo

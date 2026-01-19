@@ -1,151 +1,59 @@
 <template>
-  <PageWrapper dense contentFullHeight contentClass="flex">
-    <BasicTable :canResize="true" @register="registerTable">
-      <template #toolbar>
-        <a-button type="primary" @click="handleCreate" v-if="hasPermission('AccountAdd')">
-          新增账号
-        </a-button>
-      </template>
-      <template #action="{ record }">
-        <TableAction
-          :actions="[
-            {
-              ifShow: hasPermission('AccountUpdate'),
-              label: '编辑',
-              onClick: handleEdit.bind(null, record),
-            },
-            {
-              label: '重置密码',
-              onClick: handleReset.bind(null, record),
-            },
-            {
-              ifShow: hasPermission('AccountDel'),
-              label: '删除',
-              popConfirm: {
-                title: '是否确认删除',
-                placement: 'left',
-                confirm: handleDelete.bind(null, record),
-              },
-            },
-          ]"
-        />
-      </template>
-    </BasicTable>
-    <AccountModal @register="registerModal" @success="handleSuccess" />
-    <PasswordModal @register="registerPasswordModal" @success="handleSuccess" />
-  </PageWrapper>
+  <div class="taskCont">
+    <Tabs v-model:activeKey="activeKey" class="biTabs">
+      <TabPane key="dataAccount" tab="中台">
+        <DataCom dataSource="xx" />
+      </TabPane>
+      <TabPane key="offlineAccount" tab="线下">
+        <Offline dataSource="xx" />
+      </TabPane>
+      <TabPane key="onlineAccount" tab="线上">
+        <Online dataSource="xs" />
+      </TabPane>
+    </Tabs>
+  </div>
 </template>
 <script lang="ts">
-  import { defineComponent } from 'vue'
-
-  import { BasicTable, useTable, TableAction } from '/@/components/Table'
-  import { PageWrapper } from '/@/components/Page'
-
-  import { useModal } from '/@/components/Modal'
-  import AccountModal from './AccountModal.vue'
-  import PasswordModal from './PasswordModal.vue'
-
-  import { columns, searchFormSchema } from './account.data'
-  import { delUserItem, getUserList } from '/@/api/system/account'
+  import { defineComponent, ref } from 'vue'
+  import { Tabs } from 'ant-design-vue'
+  import Offline from './components/offline/index.vue'
+  import Online from './components/online/index.vue'
+  import DataCom from './components/data/index.vue'
   import { usePermission } from '/@/hooks/web/usePermission'
-  import { useMessage } from '/@/hooks/web/useMessage'
-
+  const TabPane = Tabs.TabPane
   export default defineComponent({
-    name: 'AccountPage',
-    components: { BasicTable, PageWrapper, AccountModal, PasswordModal, TableAction },
+    name: 'OrderListPage',
+    components: {
+      Tabs,
+      TabPane,
+      Online,
+      Offline,
+      DataCom,
+    },
     setup() {
-      const { createMessage } = useMessage()
+      const activeKey = ref('dataAccount')
       const { hasPermission } = usePermission()
-      const [registerModal, { openModal }] = useModal()
-      const [registerPasswordModal, { openModal: openPasswordModal }] = useModal()
-      const [registerTable, { reload }] = useTable({
-        title: '员工列表',
-        beforeFetch,
-        api: getUserList,
-        columns,
-        scroll: { y: 600 },
-        formConfig: {
-          labelWidth: 120,
-          schemas: searchFormSchema,
-          autoSubmitOnEnter: true,
-        },
-        showIndexColumn: false,
-        useSearchForm: true,
-        bordered: true,
-        actionColumn: {
-          width: 180,
-          title: '操作',
-          dataIndex: 'action',
-          slots: { customRender: 'action' },
-        },
-      })
-      // 处理参数
-      function beforeFetch(data: any) {
-        if (data.time) {
-          data['createTimeMin'] = `${data.time[0]} 00:00:00`
-          data['createTimeMax'] = `${data.time[1]} 23:59:59`
+      setTimeout(() => {
+        // 使用querySelector选择元素
+        var myDiv = document.querySelector('.taskCont .ant-tabs-top .ant-tabs-nav')
+        // 修改样式
+        if (myDiv) {
+          myDiv.style.padding = '0 24px'
+          myDiv.style.margin = '0'
         }
-        delete data.time
-        return data
-      }
-
-      function handleCreate() {
-        openModal(true, {
-          isUpdate: false,
-        })
-      }
-
-      function handleEdit(record: Recordable) {
-        openModal(true, {
-          record,
-          isUpdate: true,
-        })
-      }
-
-      function handleSuccess() {
-        reload()
-      }
-
-      async function handleDelete(record: Recordable) {
-        await delUserItem(record.id)
-        createMessage.success(`删除成功`)
-        handleSuccess()
-      }
-
-      function handleReset(record: Recordable) {
-        openPasswordModal(true, {
-          record,
-          isUpdate: true,
-        })
-      }
-
+      }, 1000)
       return {
-        registerTable,
-        registerModal,
-        handleCreate,
-        handleEdit,
-        handleSuccess,
+        activeKey,
         hasPermission,
-        handleReset,
-        handleDelete,
-        registerPasswordModal,
       }
     },
   })
 </script>
 
 <style lang="less" scoped>
-  .TableAction {
-    flex-direction: column;
-
-    ::v-deep.vben-basic-table-action {
-      button {
-        margin-bottom: 2px;
-      }
-
-      .action-divider {
-        display: none !important;
-      }
+  .biTabs {
+    .ant-tabs-nav-wrap {
+      padding-left: 24px;
     }
   }
 </style>

@@ -1,22 +1,21 @@
 import { h } from 'vue'
-import { BasicColumn } from '/@/components/Table'
 import { FormSchema } from '/@/components/Table'
 import { platform, statusList, statusSearch } from '../utils'
 import { formatNumber } from '/@/utils/tool'
 import { Tag } from 'ant-design-vue'
 import { cloneDeep } from 'lodash-es'
 import { cityCoding } from '/@/utils/cityData2'
-import { spuTypeList } from '../../goods/goodsBase/data'
-import { getStoreList } from '/@/api/store'
 import { usePermission } from '/@/hooks/web/usePermission'
 import { rentTypeList } from '../../goods/goodsLease/utils'
 import { handleMonth } from '/@/utils/order'
-// import { goodTypeList } from '../../goods/goodsLeaseMore/components/utils'
-import { getAppList } from '/@/api/saas/app'
-import { getOperatorStoreList } from '/@/api/business/operator'
 import { getTextArr } from '/@/utils/index'
-const { hasPermission } = usePermission()
+import { dataList } from '/@/views/collection/remit/data'
 
+const { hasPermission } = usePermission()
+export const spuTypeList = [
+  { label: '手机', value: 1 },
+  { label: '电动车', value: 2 },
+]
 const cityDatas = cloneDeep(cityCoding)
 cityDatas.forEach((v) => {
   v.children = v.children.map((c) => {
@@ -65,21 +64,21 @@ export const underAgeOptions = [
 ]
 // 获取用户数据的列权限
 const userStatus = {
-  姓名: hasPermission('diyRow_nickName'),
-  性别: hasPermission('diyRow_gender'),
-  手机号: hasPermission('diyRow_phone'),
+  姓名: true || hasPermission('diyRow_nickName'),
+  性别: true || hasPermission('diyRow_gender'),
+  手机号: true || hasPermission('diyRow_phone'),
 }
 //  获取渠道/平台的列权限
 const channelSystem = {
-  渠道: hasPermission('diyRow_channelCode'),
-  平台: hasPermission('diyRow_appletName'),
+  渠道: true || hasPermission('diyRow_channelCode'),
+  平台: true || hasPermission('diyRow_appletName'),
 }
 // 创建时间 / 支付时间 列权限
 const timeStatus = {
-  创建时间: hasPermission('diyRow_createTime'),
-  支付时间: hasPermission('diyRow_payTime'),
+  创建时间: true || hasPermission('diyRow_createTime'),
+  支付时间: true || hasPermission('diyRow_payTime'),
 }
-export const columns: BasicColumn[] = () => {
+export const columns = () => {
   const userinfo = getTextArr(userStatus)
   const channelInfo = getTextArr(channelSystem)
   const timeinfo = getTextArr(timeStatus)
@@ -88,12 +87,19 @@ export const columns: BasicColumn[] = () => {
       title: '订单编号',
       dataIndex: 'orderSn',
       width: 150,
-      ifShow: hasPermission('diyRow_orderSn'),
+    },
+    {
+      title: '业务端',
+      dataIndex: 'dataSources',
+      width: 150,
+      customRender: ({ record }) => {
+        const find = dataList.find((item: any) => item.value == record.dataSources)
+        if (find) return find?.label
+      },
     },
     {
       title: userinfo,
       width: 130,
-      ifShow: userStatus['姓名'] || userStatus['性别'] || userStatus['手机号'],
       customRender: ({ record }) => {
         const gender = record.gender == 1 ? '女' : '男'
         const realName = userStatus['姓名'] ? record.nickName : ''
@@ -106,37 +112,12 @@ export const columns: BasicColumn[] = () => {
         ])
       },
     },
-    // {
-    //   title: '商家号',
-    //   dataIndex: 'merchantTerminalNo',
-    //   width: 100,
-    //   ifShow: false,
-    // },
     {
       title: '地区',
       dataIndex: 'ipProvince',
       width: 120,
-      ifShow: hasPermission('diyRow_province'),
       customRender: ({ record }) => {
-        // return record.ipProvince ? `${record.ipProvince || ''}${record.ipCity || ''}` : '-'
         return record.province ? `${record.province || ''}${record.city || ''}` : '-'
-      },
-    },
-    {
-      title: channelInfo,
-      dataIndex: 'channelCode',
-      width: 120,
-      ifShow: channelSystem['渠道'] || channelSystem['平台'],
-      customRender: ({ record }) => {
-        const channelCode = record.channelCode || '-'
-        const appletName = record.appletName || '-'
-        const channel = channelSystem['渠道'] ? channelCode : ''
-        const applet = channelSystem['平台'] ? appletName : ''
-        return h('div', { textAlign: 'center' }, [
-          h('span', {}, channel),
-          h('br'),
-          h('span', {}, applet),
-        ])
       },
     },
     {
@@ -144,13 +125,11 @@ export const columns: BasicColumn[] = () => {
       dataIndex: 'storeMerchantName',
       width: 130,
       customRender: ({ text }) => text || '-',
-      ifShow: hasPermission('diyRow_storeMerchantName'),
     },
     {
       title: '业务员',
       dataIndex: 'salesperson',
       width: 120,
-      ifShow: hasPermission('diyRow_salesperson'),
       customRender: ({ text, record }) => {
         return (
           <>
@@ -165,7 +144,6 @@ export const columns: BasicColumn[] = () => {
     {
       title: '风控审单',
       dataIndex: 'operator',
-      ifShow: hasPermission('diyRow_operator'),
       width: 120,
       customRender: ({ text }) => text || '-',
     },
@@ -173,20 +151,18 @@ export const columns: BasicColumn[] = () => {
       title: '租户标识',
       dataIndex: 'tenantCode',
       width: 120,
-      ifShow: hasPermission('diyRow_tenantCode'),
       customRender: ({ text }) => text || '-',
     },
     {
       title: '商品信息',
       dataIndex: 'spuName',
-      ifShow: hasPermission('diyRow_spuName'),
       customRender: ({ record }) => {
         const find: any = spuTypeList.find((v) => v.value == record.spuType)
         return (
           <>
-            <div>商品类目: {find.label || ''}</div>
-            <div>商品名称: {record.spuName}</div>
-            <div>商品规格: {record.skuName}</div>
+            <div>商品类目: {find?.label || ''}</div>
+            <div>商品名称: {record?.spuName}</div>
+            <div>商品规格: {record?.skuName}</div>
           </>
         )
       },
@@ -195,7 +171,6 @@ export const columns: BasicColumn[] = () => {
       title: '计价方式',
       dataIndex: 'goodsLeaseType',
       width: 100,
-      ifShow: hasPermission('diyRow_goodsLeaseType'),
       customRender: ({ text }) => {
         const find: any = goodTypeList.find((v) => v.value == text)
         return (find && find.label) || ''
@@ -205,7 +180,6 @@ export const columns: BasicColumn[] = () => {
       title: '租赁类型',
       dataIndex: 'rentType',
       width: 100,
-      ifShow: hasPermission('diyRow_rentType'),
       customRender: ({ text }) => {
         if (text == 2) {
           return '月付'
@@ -216,10 +190,8 @@ export const columns: BasicColumn[] = () => {
     },
     {
       title: '首次支付金额(元)',
-      // dataIndex: 'firstPay',
       dataIndex: 'downPaymentAmount',
       width: 130,
-      ifShow: hasPermission('diyRow_downPaymentAmount'),
       customRender: ({ text, record }) =>
         formatNumber(text || record.downPaymentTotalAmount, 2) || '-',
     },
@@ -227,7 +199,6 @@ export const columns: BasicColumn[] = () => {
       title: '锁费(元)',
       dataIndex: 'lockFee2',
       width: 100,
-      ifShow: hasPermission('diyRow_lockFee2'),
       customRender: ({ text }) => formatNumber(text, 2) || '-',
     },
     {
@@ -235,7 +206,6 @@ export const columns: BasicColumn[] = () => {
       dataIndex: 'atoStatus',
       width: 110,
       fixed: 'right',
-      ifShow: hasPermission('diyRow_atoStatus'),
       customRender: ({ text }) => {
         const find = atoStatusList.find((v) => v.value == text)
         return h(Tag, { color: find?.color || 'gray' }, () => find?.label || '未知')
@@ -246,7 +216,6 @@ export const columns: BasicColumn[] = () => {
       dataIndex: 'status',
       width: 100,
       fixed: 'right',
-      ifShow: hasPermission('diyRow_status'),
       customRender: ({ record }) => {
         if (record.status == 501 && !record?.atoStatus && record.goodsLeaseType == 4) {
           record.status = 3012
@@ -259,7 +228,6 @@ export const columns: BasicColumn[] = () => {
       title: timeinfo,
       dataIndex: 'createTime',
       width: 180,
-      ifShow: timeStatus['创建时间'] || timeStatus['支付时间'],
       customRender: ({ record }) => {
         const ctime = timeStatus['创建时间'] ? record.createTime || '-' : ''
         const ptime = timeStatus['支付时间'] ? record.payTime || '-' : ''
@@ -274,7 +242,6 @@ export const columns: BasicColumn[] = () => {
       title: '审核原因',
       dataIndex: 'realReason',
       align: 'left',
-      ifShow: hasPermission('diyRow_realReason'),
       customRender: ({ text, record }) => {
         return (
           <div>
@@ -289,12 +256,10 @@ export const columns: BasicColumn[] = () => {
     {
       title: '取消原因',
       dataIndex: 'remark',
-      ifShow: hasPermission('diyRow_remark'),
     },
     {
       title: '订单分配信息',
       dataIndex: 'ifOrder',
-      ifShow: hasPermission('diyRow_ifOrder'),
       width: 230,
       customRender: ({ record }) => {
         const ifOrder = receivingList[record.ifOrder]
@@ -370,31 +335,6 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     colProps: { span: 6 },
   },
-  // {
-  //   field: 'channelCode',
-  //   label: '渠道',
-  //   component: 'Select',
-  //   colProps: { span: 6 },
-  //   componentProps: {
-  //     placeholder: '请选择',
-  //     getPopupContainer: () => document.body,
-  //   },
-  // },
-  {
-    field: 'appletCode',
-    label: '平台',
-    component: 'ApiSelect',
-    colProps: { span: 6 },
-    componentProps: {
-      params: { limit: '999999' },
-      showSearch: true,
-      placeholder: '请选择小程序',
-      api: getAppList,
-      resultField: 'list',
-      labelField: 'appletName',
-      valueField: 'appletCode',
-    },
-  },
   {
     ifShow: false,
     field: 'sourceFrom',
@@ -403,25 +343,6 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: { options: platform },
     colProps: { span: 6 },
   },
-  {
-    ifShow: false,
-    label: '平台端',
-    field: 'merchantTerminalNo',
-    component: 'Select',
-    colProps: { span: 6 },
-  },
-  // {
-  //   field: 'ifAllot',
-  //   label: '是否分配',
-  //   component: 'Select',
-  //   componentProps: {
-  //     options: [
-  //       { label: '是', value: 1 },
-  //       { label: '否', value: 0 },
-  //     ],
-  //   },
-  //   colProps: { span: 6 },
-  // },
   {
     field: 'salesmanGuarantee',
     label: '业务员担保',
@@ -452,69 +373,12 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 6 },
   },
   {
-    ifShow: hasPermission('OrderListMerchant'),
-    field: 'merchantCode',
-    label: '商家名称',
-    component: 'ApiSelect',
-    colProps: { span: 6 },
-    componentProps: {
-      showSearch: true,
-      placeholder: '请选择',
-      api: getStoreList,
-      params: { pageSize: 999999, limit: 999999 },
-      resultField: 'list',
-      labelField: 'merchantName',
-      valueField: 'merchantCode',
-    },
-  },
-  // {
-  //   field: 'needEsnotary',
-  //   label: '是否选择公证',
-  //   component: 'Select',
-  //   labelWidth: 110,
-  //   colProps: { span: 6 },
-  //   componentProps: {
-  //     options: [
-  //       { label: '是', value: 1 },
-  //       { label: '否', value: 0 },
-  //     ],
-  //   },
-  // },
-  {
     field: 'goodsLeaseType',
     label: '计价方式',
     component: 'Select',
     componentProps: { options: goodTypeList },
     colProps: { span: 6 },
   },
-  {
-    label: '风控审单',
-    field: 'operatorId',
-    component: 'ApiSelect',
-    colProps: { span: 6 },
-    componentProps: {
-      showSearch: true,
-      placeholder: '请选择',
-      api: getOperatorStoreList,
-      params: { pageSize: 999999, cursor: 999999 },
-      resultField: 'list',
-      labelField: 'userName',
-      valueField: 'uid',
-    },
-  },
-  // {
-  //   field: 'agreementStatus',
-  //   label: '周期代扣状态',
-  //   component: 'Select',
-  //   colProps: { span: 6 },
-  //   labelWidth: 120,
-  //   componentProps: {
-  //     options: [
-  //       { label: '关闭', value: 0 },
-  //       { label: '正常', value: 1 },
-  //     ],
-  //   },
-  // },
   {
     field: 'atoStatusList',
     label: '蚂蚁代扣授权',
@@ -583,4 +447,14 @@ export const searchFormSchema: FormSchema[] = [
       ],
     },
   },
+  // {
+  //   field: 'dataSources',
+  //   label: '业务数据',
+  //   component: 'Select',
+  //   defaultValue: 'xx',
+  //   componentProps: {
+  //     options: dataList,
+  //   },
+  //   colProps: { span: 8 },
+  // },
 ]
