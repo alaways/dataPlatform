@@ -1,6 +1,9 @@
 import { BasicColumn } from '/@/components/Table'
 import { FormSchema } from '/@/components/Table'
-
+const getText = (text) => {
+  if (text == null || text == 0 || text == '0') return '-'
+  return text + '%'
+}
 export const columns: BasicColumn[] = [
   {
     title: '月份',
@@ -20,27 +23,12 @@ export const columns: BasicColumn[] = [
     width: 130,
     dataIndex: 'ratio',
   },
-  //  {
-  //   title: '排除城市',
-  //   width: 130,
-  //   dataIndex: 'ipCityList',
-  // },
-  // {
-  //   title: '排除业务员',
-  //   width: 130,
-  //   dataIndex: 'salesPersonNameList',
-  // },
-  // {
-  //   title: '排除商户',
-  //   width: 130,
-  //   dataIndex: 'storeMerchantNameList',
-  // },
   {
     title: 'amt-fpd1',
     dataIndex: 'fpd1',
     width: 100,
     customRender: ({ text }) => {
-      return text + '%'
+      return getText(text)
     },
   },
   {
@@ -48,7 +36,7 @@ export const columns: BasicColumn[] = [
     dataIndex: 'fpd3',
     width: 100,
     customRender: ({ text }) => {
-      return text + '%'
+      return getText(text)
     },
   },
   {
@@ -56,7 +44,7 @@ export const columns: BasicColumn[] = [
     dataIndex: 'fpd15',
     width: 100,
     customRender: ({ text }) => {
-      return text + '%'
+      return getText(text)
     },
   },
   {
@@ -64,7 +52,7 @@ export const columns: BasicColumn[] = [
     dataIndex: 'fpd30',
     width: 100,
     customRender: ({ text }) => {
-      return text + '%'
+      return getText(text)
     },
   },
   {
@@ -72,7 +60,7 @@ export const columns: BasicColumn[] = [
     dataIndex: 'amountfpd1',
     width: 120,
     customRender: ({ text }) => {
-      return text + '%'
+      return getText(text)
     },
   },
   {
@@ -80,7 +68,7 @@ export const columns: BasicColumn[] = [
     dataIndex: 'amountfpd3',
     width: 120,
     customRender: ({ text }) => {
-      return text + '%'
+      return getText(text)
     },
   },
   {
@@ -88,7 +76,7 @@ export const columns: BasicColumn[] = [
     dataIndex: 'amountfpd15',
     width: 120,
     customRender: ({ text }) => {
-      return text + '%'
+      return getText(text)
     },
   },
   {
@@ -96,7 +84,47 @@ export const columns: BasicColumn[] = [
     dataIndex: 'amountfpd30',
     width: 100,
     customRender: ({ text }) => {
-      return text + '%'
+      return getText(text)
+    },
+  },
+  {
+    title: 'farg1',
+    dataIndex: 'farg1',
+    width: 120,
+    customRender: ({ text }) => {
+      return getText(text)
+    },
+  },
+  {
+    title: 'farg3',
+    dataIndex: 'farg3',
+    width: 120,
+    customRender: ({ text }) => {
+      return getText(text)
+    },
+  },
+  {
+    title: 'farg7',
+    dataIndex: 'farg7',
+    width: 120,
+    customRender: ({ text }) => {
+      return getText(text)
+    },
+  },
+  {
+    title: 'farg15',
+    dataIndex: 'farg15',
+    width: 120,
+    customRender: ({ text }) => {
+      return getText(text)
+    },
+  },
+  {
+    title: 'farg30',
+    dataIndex: 'farg30',
+    width: 120,
+    customRender: ({ text }) => {
+      return getText(text)
     },
   },
 ]
