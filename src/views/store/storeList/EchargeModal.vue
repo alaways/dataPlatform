@@ -38,7 +38,6 @@
       const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
         resetFields()
         setModalProps({ confirmLoading: false })
-        console.log(data, '我是data')
         const treeData = data.merchantCodeList
         updateSchema({
           field: 'merchantCode',
@@ -50,7 +49,6 @@
               key: 'merchantCode',
             },
             onChange: (e, v) => {
-              console.log(formatNumber(v.availableBalance || 0, 2), 'availableBalance')
               setFieldsValue({
                 merchantCode1: e,
                 availableBalance: formatNumber(v.availableBalance || 0, 2),

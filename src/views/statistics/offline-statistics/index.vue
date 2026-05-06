@@ -21,6 +21,7 @@
   import ZijinTongJi from './components/finance/index.vue'
   import YuQiTongJi from './components/slippage/index.vue'
   import YunYingTongJi from './components/operation/index.vue'
+  import VintageTarget2 from './components/vintage2/index.vue'
   import OrderTongJi from './components/order/index.vue'
   import UserTongJi from './components/user/index.vue'
   import VintageTarget from './components/vintage/index.vue'
@@ -39,12 +40,12 @@
       UserTongJi,
       VintageTarget,
       HomeTotal,
+      VintageTarget2,
     },
 
     setup() {
       // 此处可以得到用户ID
       const menuData = ref<any>(menuList || [])
-      console.log(menuData, 'menuDataShow')
       const loading = ref(false)
       const currentKey = ref(menuList[0].key)
       return {

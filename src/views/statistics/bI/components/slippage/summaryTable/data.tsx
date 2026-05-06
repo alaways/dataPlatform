@@ -3,6 +3,8 @@ import { FormSchema } from '/@/components/Form'
 import { BasicColumn } from '/@/components/Table'
 import { formatNumber } from '/@/utils/tool'
 import { goodTypeList } from '/@/views/goods/goodsLeaseMore/components/utils'
+import { getAppList } from '/@/api/saas/app'
+
 function getGoodsLeaseOptions() {
   const goodsLeaseOptions: any = cloneDeep(goodTypeList)
   goodsLeaseOptions.unshift({ label: '全部', value: '' })
@@ -126,47 +128,69 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'rentType',
-    label: '维度',
-    labelWidth: 50,
-    component: 'Select',
-    defaultValue: 2,
+    field: 'merchantTerminalNoList',
+    label: '平台',
+    component: 'ApiSelect',
     colProps: { span: 6 },
-    componentProps: {
-      allowClear: false,
-      options: [
-        { label: '全部', value: '' },
-        { label: '日付', value: 0 },
-        { label: '十天', value: 4 },
-        { label: '周付', value: 1 },
-        { label: '月付', value: 2 },
-      ],
+    componentProps: () => {
+      return {
+        params: { limit: '999999' },
+        showSearch: true,
+        placeholder: '请选择小程序',
+        api: getAppList,
+        afterFetch: (data) => {
+          const ndata = data.list
+          return ndata
+        },
+        mode: 'multiple',
+        resultField: 'list',
+        labelField: 'appletName',
+        valueField: 'merchantTerminalNo',
+      }
     },
   },
-  {
-    field: 'spuType',
-    label: '品类',
-    component: 'Select',
-    defaultValue: '',
-    colProps: { span: 6 },
-    componentProps: {
-      allowClear: false,
-      options: [
-        { label: '全部', value: '' },
-        { label: '手机', value: 1 },
-        { label: '电动车', value: 2 },
-      ],
-    },
-  },
-  {
-    field: 'goodsLeaseType',
-    label: '租赁业务',
-    component: 'Select',
-    defaultValue: '',
-    colProps: { span: 6 },
-    componentProps: {
-      allowClear: false,
-      options: getGoodsLeaseOptions(),
-    },
-  },
+  // {
+  //   field: 'rentType',
+  //   label: '维度',
+  //   labelWidth: 50,
+  //   component: 'Select',
+  //   defaultValue: 2,
+  //   colProps: { span: 6 },
+  //   componentProps: {
+  //     allowClear: false,
+  //     options: [
+  //       { label: '全部', value: '' },
+  //       { label: '日付', value: 0 },
+  //       { label: '十天', value: 4 },
+  //       { label: '周付', value: 1 },
+  //       { label: '月付', value: 2 },
+  //     ],
+  //   },
+  // },
+  // {
+  //   field: 'spuType',
+  //   label: '品类',
+  //   component: 'Select',
+  //   defaultValue: '',
+  //   colProps: { span: 6 },
+  //   componentProps: {
+  //     allowClear: false,
+  //     options: [
+  //       { label: '全部', value: '' },
+  //       { label: '手机', value: 1 },
+  //       { label: '电动车', value: 2 },
+  //     ],
+  //   },
+  // },
+  // {
+  //   field: 'goodsLeaseType',
+  //   label: '租赁业务',
+  //   component: 'Select',
+  //   defaultValue: '',
+  //   colProps: { span: 6 },
+  //   componentProps: {
+  //     allowClear: false,
+  //     options: getGoodsLeaseOptions(),
+  //   },
+  // },
 ]

@@ -76,7 +76,6 @@
         if (!isArray(result)) {
           result = get(result, props.resultField)
         }
-        console.log(result, 'resultShow')
         treeData.value = (result as Recordable[]) || []
         isFirstLoaded.value = true
         emit('options-change', treeData.value)

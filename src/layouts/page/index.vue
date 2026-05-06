@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-  import { computed, defineComponent, unref } from 'vue'
+  import { computed, defineComponent, onUnmounted, unref } from 'vue'
 
   import { useRootSetting } from '/@/hooks/setting/useRootSetting'
 
@@ -54,7 +54,6 @@
         }
         return tabStore.getCachedTabList
       })
-
       return {
         getTransitionName,
         openCache,

@@ -71,7 +71,7 @@
         span: 6,
       },
     },
-    useSearchForm: false,
+    useSearchForm: true,
     showIndexColumn: false,
     scroll: { y: '100%' },
     pagination: false,
@@ -85,6 +85,10 @@
   })
 
   function beforeFetch(data) {
+    // 如果筛选了平台
+    if (data?.merchantTerminalNoList) {
+      data.merchantTerminalNoList = data?.merchantTerminalNoList?.join(',')
+    }
     return data
   }
 

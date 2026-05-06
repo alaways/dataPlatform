@@ -73,7 +73,6 @@
     setup(props, { emit }) {
       const options = ref<OptionsItem[]>([])
       const initOptions = ref(props?.initProps || [])
-      console.log(props, options, '我是props数据')
       const loading = ref(false)
       const isFirstLoad = ref(true)
       const emitData = ref<any[]>([])
@@ -128,9 +127,7 @@
           }
 
           if (Array.isArray(res)) {
-            
             options.value = [ ...initOptions.value, ...res ]
-            console.log(initOptions.value, res,options.value , 'resSSShow')
             emitChange()
             return
           }

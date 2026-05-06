@@ -537,7 +537,6 @@
             pieRef.value.init(event, cutRes.value)
           }
         })
-        console.log(event, cutRes.value, 'eventShow')
       }
       return {
         orderCount: orderCount.value?.filter((item: any) => item.isShow),

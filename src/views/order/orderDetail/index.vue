@@ -110,7 +110,6 @@
       CollectionRecord,
       ZxSearch,
     },
-
     setup() {
       const route = useRoute()
       const go = useGo()
@@ -129,7 +128,6 @@
       const auditId = ref(route.query?.auditId)
       const back = ref(route.query?.back)
       const tabName = String(route.query?.tab || '')
-
       // 用于分配订单
       const ifAllot = ref(route.query?.ifAllot)
       // 用于商家订单
@@ -138,7 +136,6 @@
       if (route.query.isAllocation) {
         isAllocation.value = route.query.isAllocation == '1'
       }
-
       const detailInfo = ref<any>()
       const currentKey = ref(menuList[0]?.key) // 菜单key
       const fastMailList = ref<any>()
@@ -147,20 +144,16 @@
       const billstr = ref('')
       const billsList = ref([])
       const loading = ref(true)
-
       provide('init', getDetail)
-
       // 设置Tab的标题（不会影响页面标题）
       const { setTitle } = useTabs()
       setTitle('订单详情:' + userName.value)
-
       const showActionList = computed(() => {
         const dlist = showIconAction(detailInfo.value, { ifAllot: ifAllot.value }).filter(
           (v) => v.show,
         )
         return dlist && dlist.length
       })
-
       getDetail()
       async function getDetail() {
         loading.value = true
@@ -168,7 +161,6 @@
         // 获取订单详情
         detailInfo.value = await getOrderDetail(orderId.value)
         loading.value = false
-        console.log(detailInfo.value, 'detailInfoValue')
         // 切换 0首付使用 有橙风控
         if (detailInfo.value.goodsLeaseType == 4) {
           menuData.value.forEach((v) => {
@@ -184,7 +176,6 @@
         if (detailInfo?.value.fsOrderId) {
           menuData.value = [...menuData?.value]
         }
-        console.log(menuList, menuData.value, '么有关联征信')
         // 租后管理
         const status = detailInfo.value.status
         if (
@@ -204,12 +195,10 @@
         getFastMailList().then((res) => {
           fastMailList.value = res
         })
-
         // 商家分配
         getStoreList({ pageSize: 99999 }).then((res) => {
           merchantCodeList.value = res.list
         })
-
         // 首次支付金额
         totalAmount.value = detailInfo.value?.downPaymentAmount || 0
         // 要付的账单
@@ -330,7 +319,6 @@
           getDetail()
         }
       }
-
       /**
        * 处理
        */

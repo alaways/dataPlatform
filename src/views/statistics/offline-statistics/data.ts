@@ -19,6 +19,11 @@ export const menuList = [
     ifShow: hasPermission('VintagePage'),
   },
   {
+    tab: 'Vintage指标(新)',
+    key: 'VintageTarget2', // 对应组件名
+    ifShow: hasPermission('VintagePage'),
+  },
+  {
     tab: '资金统计',
     key: 'ZijinTongJi', // 对应组件名
     ifShow: hasPermission('StatisticsFinancePage'),

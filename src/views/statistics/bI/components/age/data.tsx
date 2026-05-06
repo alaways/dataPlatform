@@ -8,8 +8,7 @@ export const columns: BasicColumn[] = [
     dataIndex: 'age_range',
     width: 150,
     customRender: ({ text }) => {
-      console.log(text, 'narryShow')
-      return text ||  '-'
+      return text || '-'
     },
   },
   {

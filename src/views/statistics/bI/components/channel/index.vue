@@ -1,5 +1,9 @@
 <template>
-  <BaseTable :api="getProjectChannelOrder" :columns="columns" :searchFormSchema="searchFormSchema" />
+  <BaseTable
+    :api="getProjectChannelOrder"
+    :columns="columns"
+    :searchFormSchema="searchFormSchema"
+  />
 </template>
 <script lang="ts">
   import { defineComponent } from 'vue'

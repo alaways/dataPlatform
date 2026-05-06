@@ -40,16 +40,21 @@
     <TabPane key="amountLv" tab="金额逾期率" v-if="hasPermission('amountLvOrder')">
       <AmountLv />
     </TabPane>
-    
     <!-- v-if="hasPermission('vistageOrder')" -->
-    <TabPane key="vintage" tab="Vintage" >
+    <TabPane key="vintage" tab="Vintage">
       <Vintage />
     </TabPane>
     <!-- 余额衰减表 -->
-    <TabPane key="amoutchange" tab="余额衰减表" >
+    <TabPane key="amoutchange" tab="余额衰减表">
       <AmountChange />
     </TabPane>
-    
+    <!-- 余额衰减表 -->
+    <TabPane key="orderYq" tab="当前逾期率" v-if="!iswAdmin">
+      <OrderYq />
+    </TabPane>
+    <TabPane key="orderYqLv" tab="每期逾期率">
+      <OrderYqLv />
+    </TabPane>
   </Tabs>
 </template>
 <script lang="ts">
@@ -71,7 +76,14 @@
   import AmountLv from './components/amountLv/index.vue'
   import Vintage from './components/vintage/index.vue'
   import AmountChange from './components/amountChange/index.vue'
+  import OrderYq from './components/orderYq/index.vue'
+  import OrderYqLv from './components/orderYqLv/index.vue'
+  // /mayiApi/vintage/orderOverdueReturnLv
   const TabPane = Tabs.TabPane
+  const uinfo = localStorage.getItem('USERINFO')
+      ? JSON.parse( localStorage.getItem('USERINFO') )
+      : null
+  
   export default defineComponent({
     name: 'BIDataTotal',
     components: {
@@ -92,13 +104,18 @@
       AmountLv,
       Vintage,
       AmountChange,
+      OrderYq,
+      OrderYqLv,
     },
     setup() {
       const { hasPermission } = usePermission()
-      // || 'online'
-      const activeKey = ref('onlineOrder')
+      const iswAdmin = ref(uinfo?.uid == '42398518')
+      // || 'online' || onlineOrder
+      // TODO
+      const activeKey = ref('online')
       return {
         activeKey,
+        iswAdmin,
         hasPermission,
       }
     },

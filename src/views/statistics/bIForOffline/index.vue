@@ -21,9 +21,11 @@
   import YuQiTongJi from './components/slippage/index.vue'
   import OrderTongJi from './components/order/index.vue'
   import VintageTarget from './components/vintage/index.vue'
+  import VintageTarget2 from './components/vintage2/index.vue'
   import HomeTotal from './components/home/index.vue'
   import orderBI from './components/orderBi/index.vue'
   import orderLevel from './components/orderLevel/index.vue'
+  import OrderYqLv from './components/orderYqLv/index.vue'
   export default defineComponent({
     name: 'OfflineStatistics',
     components: {
@@ -37,6 +39,8 @@
       HomeTotal,
       orderBI,
       orderLevel,
+      VintageTarget2,
+      OrderYqLv,
     },
 
     setup() {

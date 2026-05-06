@@ -122,18 +122,7 @@ export const moneyList = [
     tooltip: '金额逾期率=逾期租金金额/总成交金额',
     ifShow: hasPermission('StatisticsFinanceAmountLv'),
   },
-  // {
-  //   name: '罚金减免金额',
-  //   content: '',
-  //   key: 'penaltyDiscountAmount',
-  //   isTotal: true,
-  //   hide: true,
-  //   value: 0,
-  //   scale: 0,
-  //   type: 1,
-  // },
 ]?.filter((item: any) => item.ifShow)
-console.log(hasPermission('StatisticsFinanceAmountLv'), 'hasPermission')
 export const searchFormSchema: FormSchema[] = [
   {
     field: 'rentType',

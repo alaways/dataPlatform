@@ -118,7 +118,6 @@
         userInfo.value = data.record?.userIdentify
         oldCardFrontImg.value = JSON.parse(JSON.stringify(pdata.cardFrontImage))
         oldCardBackImg.value = JSON.parse(JSON.stringify(pdata.cardBackImage))
-        console.log(pdata.cardBackImage, 'cardBackImageSHow')
         if (unref(isUpdate)) {
           setFieldsValue({
             ...pdata,
@@ -165,7 +164,7 @@
         return new Promise(async (resolve) => {
           const values = await validate()
           //如果没有验证码 显示验证码弹窗
-          const dtoList = []
+          const dtoList: any = []
           if (
             cardFrontImage.value &&
             cardFrontImage.value?.indexOf('guangsu-v2.oss-cn-shanghai.aliyuncs.com') == -1
@@ -196,7 +195,6 @@
           })
           if (res.code != 200) {
             if (res.code == 501) {
-              console.log(res, res.code != 200, 'resShow')
               isSccues.value = false
             } else {
               isSccues.value = true
@@ -212,7 +210,6 @@
             const backItem = res.data?.find((item) => item.side == 'back')
             const dfrontIndex = dtoList.findIndex((item: any) => item.side == 'front')
             const dbackIndex = dtoList.findIndex((item: any) => item.side == 'back')
-            console.log(dfrontIndex, frontItem, 'dfrontIndex')
             if (dfrontIndex > -1) {
               cardFrontImage.value = frontItem?.pic
               dtoList[dfrontIndex].imageBase64 = frontItem?.pic
@@ -229,16 +226,13 @@
         try {
           return new Promise(async (resolve) => {
             const values = await validate()
-
             setDrawerProps({ confirmLoading: true })
-            // TODO custom api
             if (!cardFrontImage.value) return message.warn('请上传身份证正面')
             if (!cardBackImage.value) return message.warn('请上传身份证正面')
             //调用上传照片
             uploadImgs().then(async (res) => {
               if (res == 'error') {
                 resolve({ status: 'error', value: isSccues.value })
-                console.log('我报错了', isSccues.value)
               } else {
                 resolve({ status: 'ok', value: isSccues.value })
                 if (!isChange.value) {
@@ -312,27 +306,6 @@
         })
         isChange.value = true
       }
-      // const closeHide = () => {
-      //   document.getElementById('aliyunCaptcha-mask').style.height = 0
-      //   document.getElementById('aliyunCaptcha-window-popup').style.height = 0
-      //   document.getElementById('aliyunCaptcha-window-popup').style.padding = 0
-      //   document.getElementById('aliyunCaptcha-window-popup').style.overflow = 'hidden'
-      // }
-      // 确认的操作
-      // const confirmHanlder = () => {
-      //   document.getElementById('aliyunCaptcha-mask').style.height = 0
-      //   document.getElementById('aliyunCaptcha-window-popup').style.height = 0
-      //   document.getElementById('aliyunCaptcha-window-popup').style.padding = 0
-      //   document.getElementById('aliyunCaptcha-window-popup').style.overflow = 'hidden'
-      //   beforeCheck?.().then((res) => {
-      //     if (res == 'ok') {
-      //       document.getElementById('aliyunCaptcha-mask').style.height = '100%'
-      //       document.getElementById('aliyunCaptcha-window-popup').style.height = '350px'
-      //       document.getElementById('aliyunCaptcha-window-popup').style.padding = '16px 16px 12px 16px'
-      //       document.getElementById('aliyunCaptcha-window-popup').style.overflow = 'static'
-      //     }
-      //   })
-      // }
       return {
         registerDrawer,
         registerForm,
@@ -346,7 +319,6 @@
         beforeCheck,
         getCaptchaCode,
         isSccues,
-        // confirmHanlder,
       }
     },
   })

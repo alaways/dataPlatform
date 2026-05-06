@@ -300,21 +300,6 @@ export const formSchema: FormSchema[] = [
     required: true,
     component: 'Select',
     colProps: { span: 20 },
-    // componentProps: ({ formModel }) => {
-    //   return {
-    //     showSearch: true,
-    //     placeholder: '请选择账号',
-    //     api: getUserList,
-    //     params: { limit: 999999, status: '1', userType: '1' },
-    //     resultField: 'list',
-    //     labelField: 'userName',
-    //     valueField: 'uid',
-    //     onChange: (e, v) => {
-    //       console.log(e)
-    //       formModel.merchantName = v.label
-    //     },
-    //   }
-    // },
   },
   {
     field: 'merchantCode',

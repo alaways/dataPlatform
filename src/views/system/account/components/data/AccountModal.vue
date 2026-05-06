@@ -53,6 +53,12 @@
         }
 
         if (unref(isUpdate)) {
+          const item = JSON.parse(data.record?.loginUid)
+          let onlineUid, offlineUid
+          if (item) {
+            onlineUid = String(item?.mayi)
+            offlineUid = String(item?.newAdmin)
+          }
           setFieldsValue({
             ...data.record,
             // deptId: (data.record.deptId && String(data.record.deptId).split(',')) || [],
@@ -64,6 +70,8 @@
               (data.record.merchantTerminalNo &&
                 String(data.record.merchantTerminalNo).split(',')) ||
               [],
+            onlineUid,
+            offlineUid,
           })
         }
       })
@@ -128,10 +136,10 @@
           const formValues = cloneDeep(values)
           const offlineUid = formValues['offlineUid']
           const onlineUid = formValues['onlineUid']
-          // formValues.loginUid = JSON.stringify({
-          //   mayi: onlineUid,
-          //   newAdmin: offlineUid,
-          // })
+          formValues.loginUid = JSON.stringify({
+            mayi: onlineUid,
+            newAdmin: offlineUid,
+          })
           // formValues['deptId'] = (values.deptId && values.deptId.join(',')) || ''
           formValues['postId'] = (values.postId && values.postId.join(',')) || ''
           if (values.roleId && typeof values.roleId == 'string') {

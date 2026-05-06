@@ -27,7 +27,9 @@
     setup() {
       const { hasPermission } = usePermission()
       const pieKey = ref('2')
-      const uinfo = localStorage.getItem('USERINFO') ? JSON.parse(localStorage.getItem('USERINFO')) : null
+      const uinfo = localStorage.getItem('USERINFO')
+        ? JSON.parse( localStorage.getItem('USERINFO') )
+        : null
       const iswAdmin = uinfo?.uid == '42398518'
       // 用户数据
       const userContent = ref([
@@ -107,7 +109,7 @@
           color: '#ffff',
         },
         {
-          id: 'orderCountFor801',
+          id: 'rentOrderCount',
           label: '当前在租订单数',
           amount: '',
           titple: '未到最后到期日的订单数减已买断订单/已完结订单',
@@ -118,7 +120,7 @@
           id: 'orderCountFor901',
           label: '当前逾期订单数',
           amount: '',
-          titple: '当前平台在于订单总数',
+          titple: '当前平台在逾订单总数',
           isShow: hasPermission('yuqiOrderCountForAll'),
           color: '#fff',
         },
@@ -197,15 +199,15 @@
           isShow: hasPermission('orderCountForGiveBack'),
           color: '#fff',
         },
-        {
-          id: 'rentalOrderOverdueRate',
-          label: '在租订单逾期率',
-          titple: '在租已逾期订单数/在租订单数',
-          amount: '',
-          isAddLv: true,
-          isShow: hasPermission('rentalOrderOverdueRateForOnline'),
-          color: '#fff',
-        },
+        // {
+        //   id: 'rentalOrderOverdueRate',
+        //   label: '在租订单逾期率',
+        //   titple: '在租已逾期订单数/在租订单数',
+        //   amount: '',
+        //   isAddLv: true,
+        //   isShow: hasPermission('rentalOrderOverdueRateForOnline'),
+        //   color: '#fff',
+        // },
       ])
       // 金额数据
       const AmountContent = ref([
@@ -278,27 +280,27 @@
       ])
       const cutRes = ref(null)
       const pieRef = ref<any>()
+      const merchantTerminalNoList = '2023111709466887'
       onMounted(async () => {
-        
+        // 默认只传光速易租
         const userRes = await getUserInfo()
         const orderRes = await getOrderCount()
-        const lvRes = await getBIwMainForOnline({ type: 1 })
-        console.log(lvRes, 'lvResshow')
+        const lvRes = await getBIwMainForOnline({ type: 1, merchantTerminalNoList })
         // 申请中，  待审核， 待支付， 待发货 状态的数据
         // 申请中的数据
-        const shenqingOrderNum = await getOrderNum({ orderStatusList: 109 })
+        const shenqingOrderNum = await getOrderNum({ orderStatusList: 109, merchantTerminalNoList })
         // 待审核，的数据
-        const shenheOrderNum = await getOrderNum({ orderStatusList: 201 })
+        const shenheOrderNum = await getOrderNum({ orderStatusList: 201, merchantTerminalNoList })
         // 待支付的数据
-        const whenPayOrderNum = await getOrderNum({ orderStatusList: 401 })
+        const whenPayOrderNum = await getOrderNum({ orderStatusList: 401, merchantTerminalNoList })
         // 待发货的数据
-        const fahuoOrderNum = await getOrderNum({ orderStatusList: 501 })
+        const fahuoOrderNum = await getOrderNum({ orderStatusList: 501, merchantTerminalNoList })
         // 待续租订单的数据
-        const dxzOrderCount = await getOrderNum({ orderStatusList: 1003 })
+        const dxzOrderCount = await getOrderNum({ orderStatusList: 1003, merchantTerminalNoList })
         // 续租中订单的数据
-        const xzzOtderCount = await getOrderNum({ orderStatusList: 902 })
+        const xzzOtderCount = await getOrderNum({ orderStatusList: 902, merchantTerminalNoList })
         // 续租中订单的数据
-        const orderCountForGiveBack = await getOrderNum({ searchType: 1 })
+        const orderCountForGiveBack = await getOrderNum({ searchType: 1, merchantTerminalNoList })
         const otherRes = {
           shenqingOrderNum,
           shenheOrderNum,
@@ -322,17 +324,18 @@
           todayOverOrderAmount: lvRes?.data?.todayOverOrderAmount,
           yesteOverOrderAmount: lvRes?.data?.yesteOverOrderAmount,
           todayOverOrderAmountRate: lvRes?.data?.todayOverOrderAmountRate,
+          rentOrderCount: lvRes?.data?.rentOrderCount,
         }
-        let orderAmountRes = await getOrderAllAmount()
+        let orderAmountRes = await getOrderAllAmount({ merchantTerminalNoList })
+        if (!orderAmountRes) return
         Object.keys(orderAmountRes)?.forEach((item: any) => {
           if (item !== 'orderAmountForType2NoPaidOverdueRate') {
             orderAmountRes[item] = orderAmountRes[item] / 100
           }
         })
-        const allData = { ...userRes, ...orderRes, ...otherRes, ...orderAmountRes, }
+        const allData = { ...userRes, ...orderRes, ...otherRes, ...orderAmountRes }
         cutRes.value = allData
         nextTick(() => {
-          console.log(pieRef.value, allData, 'pieRefValue')
           if (pieRef.value) {
             pieRef.value.init(pieKey.value, allData)
           }
@@ -340,19 +343,20 @@
       })
       // 获取用户数据
       const getUserInfo = async () => {
-        return await getNewUserCountInfo({})
+        return await getNewUserCountInfo({ merchantTerminalNoList })
       }
       // 获取总订单数据
       const getOrderCount = async () => {
-        return await getNewOrderCountInfo({})
+        return await getNewOrderCountInfo({ merchantTerminalNoList })
       }
       //获取订单数 数据
       const getOrderNum = async (payload: any) => {
+        payload.merchantTerminalNoList = merchantTerminalNoList
         return await getOrderCountByStatus(payload)
       }
       //获取订单总金额数据
       const getOrderAllAmount = async () => {
-        return await getOrderAmountInfo({})
+        return await getOrderAmountInfo({ merchantTerminalNoList })
       }
       const onChangePie = (event) => {
         pieKey.value = event

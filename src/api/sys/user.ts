@@ -56,6 +56,5 @@ export function getUnBindCard(params: any) {
 }
 // 获取地址列表
 export function getAddressList(params: any) {
-  console.log(params, 'addressListPrams')
   return defHttp.get({ url: '/sys/address/list', params })
 }

@@ -13,9 +13,14 @@ export const menuList = [
     key: 'HomeTotal', // 对应组件名
     ifShow: hasPermission('offlineDataInfo'),
   },
+  // {
+  //   tab: 'Vintage指标',
+  //   key: 'VintageTarget', // 对应组件名
+  //   ifShow: hasPermission('dataVintageIndex'),
+  // },
   {
-    tab: 'Vintage指标',
-    key: 'VintageTarget', // 对应组件名
+    tab: 'Vintage指标(新)',
+    key: 'VintageTarget2', // 对应组件名
     ifShow: hasPermission('dataVintageIndex'),
   },
   {
@@ -42,5 +47,10 @@ export const menuList = [
     tab: '等级',
     key: 'orderLevel', // 对应组件名
     ifShow: hasPermission('orderLevel'),
+  },
+  {
+    tab: '每期逾期率',
+    key: 'OrderYqLv', // 对应组件名
+    ifShow: true || hasPermission('OrderYqLv'),
   },
 ]?.filter((item: any) => item?.ifShow)

@@ -1,9 +1,9 @@
 <template>
   <BasicTable @register="registerTable" />
-  <FloatSearch :confirmFn="confirmFn"/>
+  <FloatSearch :confirmFn="confirmFn" />
 </template>
 <script lang="ts">
-  import { defineComponent, ref } from 'vue'
+  import { defineComponent } from 'vue'
   import { BasicTable, useTable } from '/@/components/Table'
   import { orderCountWeekBi } from '/@/api/statistics/index'
   import { columns, searchFormSchema } from './data'
@@ -13,7 +13,7 @@
     name: 'TotalAllPie',
     components: { BasicTable, FloatSearch },
     setup() {
-      const [registerTable, { getForm , setTableData }] = useTable({
+      const [registerTable, { getForm, setTableData }] = useTable({
         title: '',
         columns: columns,
         scroll: { y: 600 },
@@ -35,12 +35,10 @@
       }
 
       async function afterFetch(data: any) {
-        console.log(data, 'afterData')
         return data || []
       }
       // 提交查询数据
-      const confirmFn = async({ city, store, user }) => {
-       
+      const confirmFn = async ({ city, store, user }) => {
         const form = await getForm()
         const value = form?.getFieldsValue()
         const params: any = {

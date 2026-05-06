@@ -9,6 +9,7 @@
   import { DatePicker } from 'ant-design-vue'
   import { handleMobValue, handleThanData } from './utils'
   import { FallOutlined, RiseOutlined } from '@ant-design/icons-vue'
+  import { getAppList } from '/@/api/saas/app'
 
   export default defineComponent({
     name: 'VintageTable',
@@ -19,13 +20,14 @@
     setup(props) {
       const loading = ref<boolean>(true)
 
-      const overdueDays = ref<any>(3)
+      const overdueDays = ref<any>('0')
       const pointType = ref<any>(2)
       const historyAttachment = ref<any>('')
       const historyAttachment2 = ref<any>('')
       const rentType = ref<any>(2)
       const spuType = ref<any>('')
-
+      const rentModeFullList = ref([])
+      const merchantTerminalNoList = ref('')
       const [registerTable, { getForm, setColumns, setTableData }] = useTable({
         title: '',
         columns,
@@ -53,6 +55,8 @@
             historyAttachment: historyTime,
             spuType: spuType.value,
             rentType: rentType.value,
+            rentModeFullList: rentModeFullList.value.join(','),
+            merchantTerminalNoList: '2023111709466887' || merchantTerminalNoList.value,
           })
         } else {
           res = await getVintageAmountListOnline({
@@ -62,6 +66,8 @@
             historyAttachment: historyTime,
             spuType: spuType.value,
             rentType: rentType.value,
+            rentModeFullList: rentModeFullList.value.join(','),
+            merchantTerminalNoList: '2023111709466887' || merchantTerminalNoList.value,
           })
         }
 
@@ -149,13 +155,13 @@
       watch(
         () => props.currentKey,
         async () => {
-          overdueDays.value = 3
+          overdueDays.value = '0'
           pointType.value = 2
           historyAttachment.value = ''
           historyAttachment2.value = ''
           const form = await getForm()
           form.setFieldsValue({
-            overdueDays: 3,
+            overdueDays: '0',
             pointType: 2,
             historyAttachment: null,
             historyAttachment2: null,
@@ -250,6 +256,41 @@
                   />
                 </div>
               )
+            },
+          },
+          {
+            field: 'rentModeFullList',
+            componentProps: {
+              onChange: (e) => {
+                if (e) rentModeFullList.value = e
+                getData()
+              },
+            },
+          },
+          {
+            field: 'merchantTerminalNoList',
+            label: '平台',
+            component: 'ApiSelect',
+            colProps: { span: 6 },
+            componentProps: () => {
+              return {
+                params: { limit: '999999' },
+                showSearch: true,
+                placeholder: '请选择小程序',
+                api: getAppList,
+                afterFetch: (data) => {
+                  const ndata = data.list
+                  return ndata
+                },
+                onChange: (data) => {
+                  merchantTerminalNoList.value = data.join(',')
+                  getData()
+                },
+                mode: 'multiple',
+                resultField: 'list',
+                labelField: 'appletName',
+                valueField: 'merchantTerminalNo',
+              }
             },
           },
         ])

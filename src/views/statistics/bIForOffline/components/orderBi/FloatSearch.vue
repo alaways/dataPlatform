@@ -1,15 +1,22 @@
 <template>
-  
   <div :class="showType == 'show' ? 'searchCont' : 'searchCont hideCont'">
-    <Button link type="text" v-if="showType == 'show'" @click="()=>changeShowType('hide')">《收起</Button>
-    <Button link type="text" v-if="showType == 'hide'" @click="()=>changeShowType('show')">展开排除数据》</Button>
+    <Button link type="text" v-if="showType == 'show'" @click="() => changeShowType('hide')">
+      《收起
+    </Button>
+    <Button link type="text" v-if="showType == 'hide'" @click="() => changeShowType('show')">
+      展开排除数据》
+    </Button>
     <Button @click="resetSelect" type="primary" v-if="showType == 'show'">重置数据</Button>
     <div class="searchtent" v-if="showType == 'show'">
       <div class="searchItem">
         <div class="searchTit">
           <span>排除城市</span>
-          <Button @click="()=>openCity('hide')" v-if="cityShow == 'show'" link type="text">收起</Button>
-          <Button @click="()=>openCity('show')" v-if="cityShow == 'hide'" link type="text">展开</Button>
+          <Button @click="() => openCity('hide')" v-if="cityShow == 'show'" link type="text">
+            收起
+          </Button>
+          <Button @click="() => openCity('show')" v-if="cityShow == 'hide'" link type="text">
+            展开
+          </Button>
         </div>
         <div></div>
         <!-- <Select 
@@ -26,10 +33,13 @@
       <div class="searchItem">
         <div class="searchTit">
           <span>排除商户</span>
-          <Button @click="()=>openStore('hide')" v-if="storeShow == 'show'" link type="text">收起</Button>
-          <Button @click="()=>openStore('show')" v-if="storeShow == 'hide'" link type="text">展开</Button>
+          <Button v-if="storeShow == 'show'" link type="text" @click="() => openStore('hide')">
+            收起
+          </Button>
+          <Button @click="() => openStore('show')" v-if="storeShow == 'hide'" link type="text">
+            展开
+          </Button>
         </div>
-        
         <!-- <Select 
           class="selectItem" 
           placeholder="请选择城市" 
@@ -44,8 +54,12 @@
       <div class="searchItem">
         <div class="searchTit">
           <span>排除业务员</span>
-          <Button @click="()=>openUser('hide')" v-if="userShow == 'show'" link type="text">收起</Button>
-          <Button @click="()=>openUser('show')" v-if="userShow == 'hide'" link type="text">展开</Button>
+          <Button @click="() => openUser('hide')" v-if="userShow == 'show'" link type="text">
+            收起
+          </Button>
+          <Button @click="() => openUser('show')" v-if="userShow == 'hide'" link type="text">
+            展开
+          </Button>
         </div>
         <!-- <Select 
           class="selectItem" 
@@ -68,15 +82,15 @@
   import { querySearchData } from '/@/api/statistics/index'
   const CheckboxGroup = Checkbox.Group
   const props = {
-    confirmFn: Function
+    confirmFn: Function,
   }
   export default defineComponent({
     name: 'TotalAllPie',
     components: { CheckboxGroup, Button, Select },
     props,
     setup(props) {
-      const cityList = ref([])//城市
-      const userList = ref([])//业务员
+      const cityList = ref([]) //城市
+      const userList = ref([]) //业务员
       const storeList = ref([]) //商户
       const selectedCity = ref([])
       const selectedUser = ref([])
@@ -86,17 +100,18 @@
       const storeShow = ref('show')
       const userShow = ref('show')
       const getSearchData = async (type) => {
-        const res = await querySearchData({type})
-        const ndata = res?.data?.map(item => { 
-            return {
-              label: item, value: item
-            }
-          })
+        const res = await querySearchData({ type })
+        const ndata: any = res?.data?.map((item: any) => {
+          return {
+            label: item,
+            value: item,
+          }
+        })
         if (type == 'ipCity') {
           cityList.value = ndata || []
         } else if (type == 'storeMerchantName') {
           storeList.value = ndata || []
-        } else if (type == 'salesPersonName'){
+        } else if (type == 'salesPersonName') {
           userList.value = ndata || []
         }
       }
@@ -113,14 +128,13 @@
         props.confirmFn({
           city: selectedCity.value,
           store: selectedStore.value,
-          user: selectedUser.value
+          user: selectedUser.value,
         })
         showType.value = 'hide'
-        // console.log(selectedCity.value, selectedStore.value, selectedUser.value, 'valueShow')
       }
       const filterOption = (input, option) => {
-        return option.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-      };
+        return option.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      }
       const changeShowType = (type) => {
         showType.value = type
       }
@@ -161,32 +175,31 @@
   })
 </script>
 <style lang="less">
-  .searchTit{
+  .searchTit {
     font-weight: bold;
     font-style: 18px;
     padding: 20px 0;
   }
-  .searchtent{
+  .searchtent {
     width: 100%;
     height: calc(100% - 40px);
-    
     overflow-y: auto;
   }
-  
-  .searchCont{
+  .searchCont {
     padding: 20px;
     position: fixed;
-    top:0;right:0;
+    top: 0;
+    right: 0;
     z-index: 999;
     width: 350px;
     height: 100%;
-    background:#fff;
+    background: #fff;
   }
-  .selectItem{
+  .selectItem {
     width: 100%;
     height: 30px;
   }
-  .bottomBtn{
+  .bottomBtn {
     width: 100%;
     margin-top: 10px;
   }

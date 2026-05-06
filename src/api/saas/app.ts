@@ -1,4 +1,4 @@
-import { defHttp } from '/@/utils/http/axios'
+import { defHttp, defHttpOnline } from '/@/utils/http/axios'
 
 enum Api {
   GetAppList = '/applet/config/page',
@@ -10,7 +10,7 @@ enum Api {
  * App列表 - 列表
  */
 export const getAppList = (params = {}) => {
-  return defHttp.get({ url: Api.GetAppList, params })
+  return defHttpOnline.get({ url: Api.GetAppList, params })
 }
 
 /**

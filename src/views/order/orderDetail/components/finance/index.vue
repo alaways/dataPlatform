@@ -68,8 +68,6 @@
       financeData.value = {
         ...detailInfo.value.orderExt,
       }
-      console.log(financeData.value)
-
       function handleUpdate() {
         openModal(true, {
           isUpdate: true,

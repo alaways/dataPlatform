@@ -28,7 +28,6 @@
         notHas.value = false
       }
     })
-    console.log(pdata, 'pdataShow')
     dlist.value = pdata
     loading.value = !loading.value
   }

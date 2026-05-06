@@ -1,5 +1,6 @@
 import { BasicColumn } from '/@/components/Table'
 import { FormSchema } from '/@/components/Table'
+import { h } from 'vue'
 const getText = (text) => {
   if (text == null || text == 0 || text == '0') return '-'
   return text + '%'
@@ -9,6 +10,7 @@ export const columns: BasicColumn[] = [
     title: '月份',
     dataIndex: 'monthWeek',
     width: 160,
+    fixed: 'left',
     // customRender: ({ text }) => {
     //   return `(${text.indexOf('W') > -1 ? '周' : '月'}) ${text}`
     // },
@@ -25,66 +27,82 @@ export const columns: BasicColumn[] = [
   },
   {
     title: 'amt-fpd1',
-    dataIndex: 'fpd1',
+    dataIndex: 'amountfpd1',
     width: 100,
-    customRender: ({ text }) => {
-      return getText(text)
+    customRender: ({ text, record }) => {
+      const cutText = getText(text)
+      const fpd1 = getText(record.farg1)
+      return h('div', { style:{ fontWeight: fpd1 == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
     title: 'amt-fpd4',
-    dataIndex: 'fpd3',
+    dataIndex: 'amountfpd3',
     width: 100,
-    customRender: ({ text }) => {
-      return getText(text)
+    customRender: ({ text, record }) => {
+      const cutText = getText(text)
+      const fpd3 = getText(record.farg3)
+      return h('div', { style:{ fontWeight: fpd3 == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
     title: 'amt-fpd15',
-    dataIndex: 'fpd15',
+    dataIndex: 'amountfpd15',
     width: 100,
-    customRender: ({ text }) => {
-      return getText(text)
+    customRender: ({ text, record }) => {
+      const cutText = getText(text)
+      const fpd15 = getText(record.farg15)
+      return h('div', { style:{ fontWeight: fpd15 == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
     title: 'amt-fpd30',
-    dataIndex: 'fpd30',
+    dataIndex: 'amountfpd30',
     width: 100,
-    customRender: ({ text }) => {
-      return getText(text)
+    customRender: ({ text, record }) => {
+      const cutText = getText(text)
+      const fpd30 = getText(record.farg30)
+      return h('div', { style:{ fontWeight: fpd30 == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
     title: 'per-fpd1',
-    dataIndex: 'amountfpd1',
+    dataIndex: 'fpd1',
     width: 120,
-    customRender: ({ text }) => {
-      return getText(text)
+    customRender: ({ text, record }) => {
+      const cutText = getText(text)
+      const fpd1 = getText(record.farg1)
+      return h('div', { style:{ fontWeight: fpd1 == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
     title: 'per-fpd4',
-    dataIndex: 'amountfpd3',
+    dataIndex: 'fpd3',
     width: 120,
-    customRender: ({ text }) => {
-      return getText(text)
+    customRender: ({ text, record }) => {
+      const cutText = getText(text)
+      const fpd3 = getText(record.farg3)
+      return h('div', { style:{ fontWeight: fpd3 == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
     title: 'per-fpd15',
-    dataIndex: 'amountfpd15',
+    dataIndex: 'fpd15',
     width: 120,
-    customRender: ({ text }) => {
-      return getText(text)
+    customRender: ({ text, record }) => {
+      const cutText = getText(text)
+      const fpd15 = getText(record.farg15)
+      return h('div', { style:{ fontWeight: fpd15 == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
     title: 'per-fpd30',
-    dataIndex: 'amountfpd30',
+    dataIndex: 'fpd30',
     width: 100,
-    customRender: ({ text }) => {
-      return getText(text)
+    customRender: ({ text, record }) => {
+      const cutText = getText(text)
+      const fpd30 = getText(record.farg30)
+      return h('div', { style:{ fontWeight: fpd30 == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
@@ -92,7 +110,8 @@ export const columns: BasicColumn[] = [
     dataIndex: 'farg1',
     width: 120,
     customRender: ({ text }) => {
-      return getText(text)
+      const cutText = getText(text)
+      return h('div', { style:{ fontWeight: cutText == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
@@ -100,7 +119,8 @@ export const columns: BasicColumn[] = [
     dataIndex: 'farg3',
     width: 120,
     customRender: ({ text }) => {
-      return getText(text)
+      const cutText = getText(text)
+      return h('div', { style:{ fontWeight: cutText == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
@@ -108,7 +128,8 @@ export const columns: BasicColumn[] = [
     dataIndex: 'farg7',
     width: 120,
     customRender: ({ text }) => {
-      return getText(text)
+      const cutText = getText(text)
+      return h('div', { style:{ fontWeight: cutText == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
@@ -116,7 +137,8 @@ export const columns: BasicColumn[] = [
     dataIndex: 'farg15',
     width: 120,
     customRender: ({ text }) => {
-      return getText(text)
+      const cutText = getText(text)
+      return h('div', { style:{ fontWeight: cutText == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
   {
@@ -124,7 +146,8 @@ export const columns: BasicColumn[] = [
     dataIndex: 'farg30',
     width: 120,
     customRender: ({ text }) => {
-      return getText(text)
+      const cutText = getText(text)
+      return h('div', { style:{ fontWeight: cutText == '100%' ? 'bold' : 'none'} },cutText)
     },
   },
 ]

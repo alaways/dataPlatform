@@ -78,10 +78,8 @@
   const InputPassword = Input.Password
   const { t } = useI18n()
   const { handleBackLogin, getLoginState } = useLoginState()
-
   const formRef = ref()
   const loading = ref(false)
-
   const formData = reactive({
     account: '',
     password: '',
@@ -93,12 +91,10 @@
 
   const { getFormRules } = useFormRules(formData)
   const { validForm } = useFormValid(formRef)
-
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.REGISTER)
 
   async function handleRegister() {
     const data = await validForm()
     if (!data) return
-    console.log(data)
   }
 </script>

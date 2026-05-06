@@ -58,7 +58,6 @@
                 key: 'id',
               },
               onChange: (e, v) => {
-                console.log(e)
                 formModel.helpArticleCategoryName = v.name
               },
             }

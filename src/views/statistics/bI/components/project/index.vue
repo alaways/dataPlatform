@@ -14,9 +14,8 @@
     components: { BasicTable },
     setup() {
       const { hasPermission } = usePermission()
-      const paramsData = ref(beforeFetch({time: handleMonth1()}))
+      const paramsData = ref(beforeFetch({ time: handleMonth1() }))
       const handleSearchInfoChange = async (params) => {
-        
         if (!params?.orderCreateTimeBegin || params.orderCreateTimeBegin == undefined) return
         console.log(params, 'paramsShow')
         paramsData.value = params
@@ -46,7 +45,7 @@
         }
         return payload
       }
-      const timer = ref(null)
+      const timer: any = ref(null)
       const baseTimeFn = () => {
         timer.value = setInterval(() => {
           init()
@@ -58,7 +57,7 @@
           orderCreateTimeBegin: handleMonth1()?.[0],
           orderCreateTimeEnd: handleMonth1()?.[1],
         }
-        const res = await getProjectOrder({...beforeFetch(paramsData?.value), ...params})
+        const res = await getProjectOrder({ ...beforeFetch(paramsData?.value), ...params })
         if (res?.code == 501) {
           clearInterval(timer.value)
           await baseTimeFn()

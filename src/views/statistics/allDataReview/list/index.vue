@@ -1,24 +1,34 @@
 <template>
-  <Card title="订单数据管理" :bordered="false">
-    <BaseCard :list="topContentChilds" :res="cutRes" />
-  </Card>
-  <OrderLine :type="2" v-if="hasPermission('orderCountForMonth')" />
-  <Card class="bottomCard" title="金额数据管理" :bordered="false">
-    <BaseCard :list="contentArrs" :res="cutRes" />
-  </Card>
+  <Tabs v-model:activeKey="activeKey" class="biTabs">
+    <TabPane key="llxz" tab="零零享租数据" v-if="hasPermission('llxzData')">
+      <Pages/>
+    </TabPane>
+    <!-- -->
+    <TabPane key="llxz2" tab="零零享租逾期数据" v-if="hasPermission('llxzYqData')">
+      <NewLLxz />
+    </TabPane>
+    <TabPane key="vintage" tab="vintage" v-if="hasPermission('llxzYqData')">
+      <Vintage />
+    </TabPane>
+  </Tabs>
 </template>
 <script lang="ts">
   import { defineComponent, ref, onMounted } from 'vue'
-  import { Card } from 'ant-design-vue'
+  import { Card, Button, Tabs } from 'ant-design-vue'
   import { usePermission } from '/@/hooks/web/usePermission'
   import BaseCard from '/@/views/statistics/components/baseCard/index.vue'
   import { getNewMain } from '/@/api/statistics/index'
   import OrderLine from '/@/views/statistics/components/OrderLine/index.vue'
+  import Pages from './page.vue'
+  import NewLLxz from './nindex/index.vue'
+  import Vintage from './vintage/index.vue'
+  const TabPane = Tabs.TabPane
   export default defineComponent({
     name: 'OOXiangzu',
-    components: { Card, BaseCard, OrderLine },
+    components: { Card, Vintage, NewLLxz, Pages, BaseCard, OrderLine, Button, Tabs, TabPane },
     setup() {
       const { hasPermission } = usePermission()
+      const activeKey = ref('llxz')
       const topContentChilds = ref([
         {
           id: 'totalOrderCount',
@@ -228,6 +238,7 @@
         contentArrs: contentArrs?.value?.filter((item: any) => item.isShow),
         cutRes,
         hasPermission,
+        activeKey,
       }
     },
   })

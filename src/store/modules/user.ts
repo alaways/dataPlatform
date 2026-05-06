@@ -25,6 +25,7 @@ interface UserState {
   lastUpdateTime: number
   roleCode: string
   isAdmin: boolean
+  isNetWork: any
 }
 
 export const useUserStore = defineStore({
@@ -41,7 +42,8 @@ export const useUserStore = defineStore({
     sessionTimeout: false,
     // Last fetch time
     lastUpdateTime: 0,
-    isAdmin: false, // 是否是超级管理员
+    isAdmin: false, // 是否是超级管理员\
+    isNetWork: null,
   }),
   getters: {
     getUserInfo(): UserInfo {
@@ -65,8 +67,14 @@ export const useUserStore = defineStore({
     getIsSupuerAdmin(): boolean {
       return this.isAdmin
     },
+    getIsNetWork(): any {
+      return this.isNetWork
+    },
   },
   actions: {
+    setIsNetWork(data: any) {
+      this.isNetWork = data
+    },
     setToken(info: string | undefined) {
       this.token = info ? info : '' // for null or undefined value
       setAuthCache(TOKEN_KEY, info)

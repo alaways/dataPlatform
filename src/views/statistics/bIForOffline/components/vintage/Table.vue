@@ -20,7 +20,7 @@
     setup(props) {
       const loading = ref<boolean>(true)
 
-      const overdueDays = ref<any>(3)
+      const overdueDays = ref<any>('0')
       const pointType = ref<any>(2)
       const historyAttachment = ref<any>('')
       const historyAttachment2 = ref<any>('')
@@ -50,7 +50,6 @@
         loading.value = true
         let res: any = []
         const historyTime = than ? historyAttachment2.value : historyAttachment.value
-        console.log(otherJZList.value, 'valueShow')
         const objStatusList = {
           Other: otherList.value?.join(',') + ',with_null',
           YXZ: yxzList.value?.join(','),
@@ -165,14 +164,14 @@
       watch(
         () => props.currentKey,
         async () => {
-          overdueDays.value = 3
+          overdueDays.value = '0'
           pointType.value = 2
           historyAttachment.value = ''
           historyAttachment2.value = ''
           merchantCode.value = 'All'
           const form = await getForm()
           form.setFieldsValue({
-            overdueDays: 3,
+            overdueDays: '0',
             pointType: 2,
             historyAttachment: null,
             historyAttachment2: null,

@@ -76,7 +76,6 @@
           const yq = Number(res.overdueOrderCount) / Number(res.countExpireOrderWithSettle)
           // if (v.key == 'yqRate') {
           //   const yq = Number(res.overDueOrderCount) / Number(res.effectOrderCount)
-          //   console.log(yq, res, 'yqqqqq')
           //   v.num = handleToFixed2(yq * 100)
           // }
           if (v.key == 'hkRate') {

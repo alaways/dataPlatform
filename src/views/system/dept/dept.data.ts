@@ -132,7 +132,6 @@ export const formSchema: FormSchema[] = [
         labelField: 'userName',
         valueField: 'uid',
         onChange: (e, v) => {
-          console.log(e)
           formModel.leader = v.label
         },
       }

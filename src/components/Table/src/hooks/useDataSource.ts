@@ -16,7 +16,7 @@ import { buildUUID } from '/@/utils/uuid'
 import { isFunction, isBoolean } from '/@/utils/is'
 import { get, cloneDeep } from 'lodash-es'
 import { FETCH_SETTING, ROW_KEY, PAGE_SIZE } from '../const'
-
+import { useUserStore } from '/@/store/modules/user'
 interface ActionType {
   getPaginationInfo: ComputedRef<boolean | PaginationProps>
   setPagination: (info: Partial<PaginationProps>) => void
@@ -312,7 +312,7 @@ export function useDataSource(
           resultItems = (await afterFetch(resultItems)) || resultItems
         }
       }
-      console.log(resultItems, isArrayResult, res, 'resultItems')
+      setLoading(false)
       dataSourceRef.value = resultItems
       setPagination({
         total: resultTotal || 0,
@@ -331,6 +331,7 @@ export function useDataSource(
     } catch (error) {
       emit('fetch-error', error)
       dataSourceRef.value = []
+      setLoading(false)
       setPagination({
         total: 0,
       })
@@ -360,6 +361,14 @@ export function useDataSource(
       unref(propsRef).immediate && fetch()
     }, 16)
   })
+  watch(
+    () => useUserStore().getIsNetWork,
+    (res) => {
+      if (res == 'Network Error') {
+        setLoading(false)
+      }
+    },
+  )
 
   return {
     getDataSourceRef,

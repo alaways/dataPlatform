@@ -210,7 +210,6 @@
         const res = await batchIfOrder({ merchantIds })
         if (res?.data.code == 200) {
           createMessage.success('批量接单成功')
-          console.log(res, '我是res')
           rowList.value = []
           reload()
           clearSelectedRowKeys()

@@ -46,7 +46,6 @@
         isUpdate.value = !!data?.isUpdate
         name.value = data.name
         const storeMerchantId = data.record?.storeMerchantId || 0
-        console.log(data.record,'dataReocrdShow')
         dataSources.value = data?.record?.dataSources
         if (unref(isUpdate)) {
           setFieldsValue({

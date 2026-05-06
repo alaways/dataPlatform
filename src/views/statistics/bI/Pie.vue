@@ -21,7 +21,6 @@
   const currentSHowKey = ref('2')
   const parentData = ref(null)
   async function init(event, data) {
-    console.log(event, data, 'pieInitOnline')
     if (data) parentData.value = data
     const currentList = event == '1' ? dlist.value : dAlllist.value
     const nlist = currentList.map((item: any) => {

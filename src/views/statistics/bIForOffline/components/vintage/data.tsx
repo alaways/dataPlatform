@@ -12,11 +12,11 @@ export const searchFormSchema: FormSchema[] = [
     field: 'overdueDays',
     label: '筛选范围',
     labelWidth: 64,
-    defaultValue: 3,
+    defaultValue: 30,
     component: 'RadioButtonGroup',
     componentProps: {
       options: [
-        { label: '3+', value: 3 },
+        { label: '0+', value: '0' },
         { label: '30+', value: 30 },
         { label: '60+', value: 60 },
         { label: '90+', value: 90 },
@@ -76,7 +76,7 @@ export const searchFormSchema: FormSchema[] = [
     label: '商家',
     component: 'Select',
     colProps: { span: 6 },
-    defaultValue: 'All',
+    defaultValue: 'Other',
     componentProps: {
       options: [
         {
@@ -120,11 +120,11 @@ export const searchAmountFormSchema: FormSchema[] = [
     field: 'overdueDays',
     label: '筛选范围',
     labelWidth: 90,
-    defaultValue: 3,
+    defaultValue: 30,
     component: 'RadioButtonGroup',
     componentProps: {
       options: [
-        { label: '3+', value: 3 },
+        { label: '0+', value: '0' },
         { label: '30+', value: 30 },
         { label: '60+', value: 60 },
         { label: '90+', value: 90 },
@@ -183,7 +183,7 @@ export const searchAmountFormSchema: FormSchema[] = [
     label: '商家',
     component: 'Select',
     colProps: { span: 6 },
-    defaultValue: 'All',
+    defaultValue: 'Other',
     componentProps: {
       options: [
         {

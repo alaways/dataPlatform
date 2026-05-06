@@ -15,7 +15,6 @@
   import { BasicForm, useForm } from '/@/components/Form/index'
   import { formSchema } from './menu.data'
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer'
-
   import { addMenuItem, updateMenuItem } from '/@/api/system/menu'
   import { useMessage } from '/@/hooks/web/useMessage'
 
@@ -26,9 +25,7 @@
     setup(_, { emit }) {
       const isUpdate = ref(true)
       const editValue = ref() // 传入数据的处理
-
       const { createMessage } = useMessage()
-
       const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
         labelWidth: 100,
         schemas: formSchema,
@@ -40,15 +37,12 @@
         setDrawerProps({ confirmLoading: false })
         isUpdate.value = !!data?.isUpdate
         editValue.value = data.record // 获取编辑传入的值
-
         // 传入表单默认值
         if (unref(isUpdate)) {
           setFieldsValue({
             ...data.record,
           })
         }
-        console.log(data.parentList)
-
         // 选择父级菜单使用
         const treeData = data.parentList
         updateSchema({
@@ -64,7 +58,6 @@
           const values = await validate()
           setDrawerProps({ confirmLoading: true })
           let res: any
-          // TODO custom api
           if (!unref(isUpdate)) {
             res = await addMenuItem(values)
           } else {
@@ -92,7 +85,6 @@
               addMenuItem(fromValue)
             })
           }
-
           createMessage.success(`${getTitle.value}成功`)
           closeDrawer()
           emit('success')

@@ -18,7 +18,7 @@ import { joinTimestamp, formatRequestDate } from './helper'
 import { useUserStoreWithOut } from '/@/store/modules/user'
 import { AxiosRetry } from '/@/utils/http/axios/axiosRetry'
 import { useUserStore } from '/@/store/modules/user'
-
+export const controller = new AbortController()
 const globSetting = useGlobSetting()
 const urlPrefix = globSetting.urlPrefix
 const { createMessage, createErrorModal } = useMessage()
@@ -27,13 +27,16 @@ const checkFn = (url: any, keys: Array<string>) => {
 }
 const OFFLINE = '/offline'
 const ONLINE = '/mayiApi'
+const RISK = '/riskApi'
 // 租机的生产域名
 // 接口请求API
 export const NEWADMINAPI = 'https://admin.gsrental.cn/api'
 export const MAYIAPI = 'https://admin.gsrental.cn/mayiApi'
+export const RISKAPI = 'https://admin.gsrental.cn/riskApi'
 // 域名
 export const HOSTNEW = 'https://admin.gsrental.cn/newAdmin/'
 export const HOSTMAYI = 'https://admin.gsrental.cn/mayiAdmin/'
+export const RISKYuMin = 'https://admin.gsrental.cn/riskAdmin/'
 
 /**
  * @description: 数据处理，方便区分多种处理方式
@@ -49,14 +52,11 @@ const transform: AxiosTransform = {
     if (isReturnNativeResponse) {
       return res
     }
-    console.log(isTransformResponse, res, '我还执行了 00')
     // 不进行任何处理，直接返回
     // 用于页面代码可能需要直接获取code，data，message这些信息时开启
     if (!isTransformResponse) {
-      console.log(isTransformResponse, res.data, '我还执行了')
       return res.data
     }
-    
     // 错误的时候返回
 
     const { data } = res
@@ -152,19 +152,17 @@ const transform: AxiosTransform = {
         config.params = undefined
       }
     }
-    if (checkFn(urlPrefix, [OFFLINE, ONLINE])) {
-      
+    if (checkFn(urlPrefix, [OFFLINE, ONLINE, RISK])) {
       // 生产环境
       if (location.href.indexOf('https://dataplatform.gsrental.cn/') > -1) {
         if (OFFLINE) config.url = `${config.url?.replace(OFFLINE, '')}`
         if (ONLINE) config.url = `${config.url?.replace(ONLINE, '')}`
-       
+        if (RISK) config.url = `${config.url?.replace(RISK, '')}`
       } else {
         if (OFFLINE) config.url = `${config.url?.replace(OFFLINE, '')}`
         if (ONLINE) config.url = `${config.url?.replace(ONLINE, '')}`
-        console.log('config.url', config)
+        if (RISK) config.url = `${config.url?.replace(RISK, '')}`
         // config.url = 'http://192.168.1.11:8080'
-        // TODO
         config.url = config.url.replace('https://admin.gsrental.cn', 'https://admin.gsrental.cn')
         //http://192.168.1.11:8080
       }
@@ -177,12 +175,17 @@ const transform: AxiosTransform = {
    */
   requestInterceptors: (config, options) => {
     // 请求之前处理config
-    console.log(config.url, '请求拦截config')
     let token = getToken()
     if (config.url?.indexOf('mayiApi') > -1) {
       const AllToken = localStorage.getItem('AllToken') ? JSON.parse(localStorage.getItem('AllToken')) : null
       if (AllToken) {
         token = 'Bearer ' + AllToken?.mayi || getToken()
+      }
+    }
+    if (config.url?.indexOf('https://admin.gsrental.cn/api') > -1) {
+      const AllToken = localStorage.getItem('AllToken') ? JSON.parse(localStorage.getItem('AllToken')) : null
+      if (AllToken) {
+        token = 'Bearer ' + AllToken?.newAdmin || getToken()
       }
     }
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
@@ -219,13 +222,13 @@ const transform: AxiosTransform = {
     const msg: string = response?.data?.error?.message ?? ''
     const err: string = error?.toString?.() ?? ''
     let errMessage = ''
-
     try {
       if (code === 'ECONNABORTED' && message.indexOf('timeout') !== -1) {
         errMessage = t('sys.api.apiTimeoutMessage')
       }
       if (err?.includes('Network Error')) {
         errMessage = t('sys.api.networkExceptionMsg')
+        useUserStore().setIsNetWork('Network Error')
       }
 
       if (errMessage) {
@@ -241,14 +244,14 @@ const transform: AxiosTransform = {
     }
 
     checkStatus(error?.response?.status, msg, errorMessageMode)
-
+    // 暂时不用重连
     // 添加自动重试机制 保险起见 只针对GET请求
-    const retryRequest = new AxiosRetry()
-    const { isOpenRetry } = config.requestOptions.retryRequest
-    config.method?.toUpperCase() === RequestEnum.GET &&
-      isOpenRetry &&
-      // @ts-ignore
-      retryRequest.retry(axiosInstance, error)
+    // const retryRequest = new AxiosRetry()
+    // const { isOpenRetry } = config?.requestOptions?.retryRequest
+    // config.method?.toUpperCase() === RequestEnum.GET &&
+    //   isOpenRetry &&
+    //   // @ts-ignore
+    //   retryRequest.retry(axiosInstance, error)
     return Promise.reject(error)
   },
 }
@@ -256,13 +259,13 @@ const getCutHost = (hostItem: string) => {
   const HOSTOBJ: any = {}
   HOSTOBJ[OFFLINE] = NEWADMINAPI
   HOSTOBJ[ONLINE] = MAYIAPI
+  HOSTOBJ[RISK] = RISKAPI
   return HOSTOBJ[hostItem]
 }
 function createAxios(opt?: Partial<CreateAxiosOptions>) {
   const _urlPrefix: any = opt?.requestOptions?.urlPrefix
-  const isChecked = checkFn(_urlPrefix, [OFFLINE, ONLINE])
-  
-  let optionHeader = {}
+  const isChecked = checkFn(_urlPrefix, [OFFLINE, ONLINE, RISK])
+  const optionHeader: any = {}
   const uinfo = localStorage.getItem('USERINFO') ? JSON.parse(localStorage.getItem('USERINFO')) : null
   if (isChecked && uinfo?.uid == '42398518') {
     optionHeader['X-Data-Source'] = 'slave'
@@ -281,7 +284,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
         // 基础接口地址
         // baseURL: globSetting.apiUrl,
 
-        headers: { 'Content-Type': ContentTypeEnum.JSON , ...optionHeader},
+        headers: { 'Content-Type': ContentTypeEnum.JSON, ...optionHeader },
         // 如果是form-data格式
         // headers: { 'Content-Type': ContentTypeEnum.FORM_URLENCODED },
         // 数据处理方式
@@ -320,13 +323,14 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 缓存bodyData
           cacheBodyData: true,
         },
+        signal: controller.signal,
       },
       opt || {},
     ),
   )
-  console.log(vaxios,'vaxiosShow')
   return vaxios
 }
+//
 export const defHttp = createAxios()
 const urlPix = urlPrefix
 // 如果是生产
@@ -349,7 +353,7 @@ export const defHttpV3 = createAxios({
 })
 export const defHttpRisk = createAxios({
   requestOptions: {
-    urlPrefix: '/riskApi',
+    urlPrefix: RISK,
   },
 })
 export const defHttpOffline = createAxios({
@@ -368,4 +372,4 @@ export const defHttpOnline = createAxios({
 //     apiUrl: 'xxx',
 //     urlPrefix: 'xxx',
 //   },
-// });
+// })

@@ -6,8 +6,6 @@ import { formatNumber } from '/@/utils/tool'
 export function handleTableData(data: any, number: number, total: any) {
   // 1.将数据分成第2期账单 和 第3期及以上
   // 2.区分 overdue_type 当天还款、提前还款 0-未还 1-当天 2-提前
-  console.log(data)
-  console.log(total)
   if (data && data.length) {
     const list = data.filter((v) => v.period_no == number && v.overdue_type != 0)
 

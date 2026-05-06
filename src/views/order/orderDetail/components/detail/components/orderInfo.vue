@@ -569,7 +569,6 @@
       const downLoadEsgineContact = async () => {
         const orderSn = detailInfo.value.orderSn
         const res = await downloadContractList(orderSn)
-        console.log(detailInfo.value, 'detailInfoShow')
         downloadByData(res.data, detailInfo.value.userIdentifyVO?.realName + '补充协议.zip')
       }
       // 生成起诉材料

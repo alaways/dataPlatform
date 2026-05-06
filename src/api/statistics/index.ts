@@ -1,4 +1,4 @@
-import { defHttpOffline, defHttpOnline, defHttp } from '/@/utils/http/axios'
+import { defHttpOffline, defHttpOnline, defHttp, defHttpRisk } from '/@/utils/http/axios'
 // 获取 曲线图 30天内的数据
 export const orderDataLineChart = async (params) => {
   return defHttpOffline.get(
@@ -12,6 +12,10 @@ export const getBIwMain = async (params) => {
     { url: `/v2/statistics/new/bi/main`, params, timeout: 60 * 1000 },
     { isTransformResponse: false },
   )
+}
+// 线下 - 每期逾期率
+export const offOrderOverdueReturnLv = async (params) => {
+  return defHttpOffline.get({ url: `vintage/orderReturnLv`, params, timeout: 60 * 1000 }, {isTransformResponse: false})
 }
 // 获取线下 数据汇总
 export const getBIwMainForOnline = async (params) => {
@@ -40,6 +44,14 @@ export const getBIwMainByMayi = async (params) => {
     { isTransformResponse: false },
   )
 }
+// 获取金额列表 异步
+export const getOverdueAmountListAsync2 = (params = {}, requestHeard) => {
+  return defHttpOffline.get({ url: '/vintage2/overdueAmountListAsync', headers: { 'updateForce': requestHeard?.updateForce }, params })
+}
+// 获取金额列表 异步结果
+export const getSysApiCache2 = (params = {}) => {
+  return defHttpOffline.get({ url: '/sysApiCache/getSysApiCache', params })
+}
 // 获取用户信息
 export const getNewUserCountInfo = async (params) => {
   return defHttpOnline.get({ url: `/bi/getUserCountInfo`, params, timeout: 60 * 1000 })
@@ -56,6 +68,11 @@ export const getOrderCountByStatus = async (params) => {
 export const getOrderAmountInfo = async (params) => {
   return defHttpOnline.get({ url: `/bi/getOrderAmountInfo`, params, timeout: 60 * 1000 })
 }
+// 异步获取订单统计数据
+export const orderInfoAsync = async (params, requestHeard) => {
+  return defHttpOnline.get({ url: `/statistic/orderInfoAsync`, headers: { 'updateForce': requestHeard?.updateForce }, params, timeout: 60 * 1000 })
+}
+
 // 获订单总金额信息
 export const getOrderInfo = async (params) => {
   return defHttpOnline.get({ url: `/statistic/orderInfo`, params, timeout: 60 * 1000 })
@@ -117,11 +134,29 @@ export const getOrderTest10 = async (params) => {
 }
 // 获取数据
 export const getOrderTest11 = async (params) => {
-  return defHttpOnline.get({ url: `/sysTH/test11`, params, timeout: 60 * 1000 }, {isTransformResponse: false})
+  return defHttpOnline.get({ url: `/sysTH/test13`, params, timeout: 60 * 1000 }, {isTransformResponse: false})
 }
 export const getOrderTest12 = async (params) => {
   return defHttpOnline.get({ url: `/sysTH/test12`, params, timeout: 60 * 1000 }, {isTransformResponse: false})
 }
+export const getOrderTest14 = async (params) => {
+  return defHttpOnline.get({ url: `/sysTH/test14`, params,  timeout: 60 * 1000 }, {isTransformResponse: false})
+}
+export const getOrderTest15 = async (params) => {
+  return defHttpOnline.get({ url: `/sysTH/test15`, params,  timeout: 60 * 1000 })
+}
+export const orderOverdueReturnLv = async (params) => {
+  return defHttpOnline.get({ url: `/vintage/orderOverdueReturnLv`, params, timeout: 60 * 1000 }, {isTransformResponse: false})
+}
+// 零零享租数据
+export const selectLLXZMob = async (params) => {
+  return defHttpOnline.get({ url: `/riskDb/selectLLXZMob`, params, timeout: 60 * 1000 }, {isTransformResponse: false})
+}
+// 优品租数据
+export const getYpzVintageCount = async (params) => {
+  return defHttpRisk.get({ url: `/vintage/getYpzVintageCount`, params, timeout: 60 * 1000 }, {isTransformResponse: false})
+}
+
 // 余额衰减表
 export const getVintageRemaining = async (params) => {
   return defHttpOnline.get({ url: `/vintageRemaining/main`, params, timeout: 60 * 1000 }, {isTransformResponse: false})
@@ -132,12 +167,21 @@ export const getVintageRemaining = async (params) => {
 export const getVintageAmountListOnline = (params = {}) => {
   return defHttpOnline.get({ url: '/vintage/overdueAmountList', params })
 }
+// 获取金额列表 异步
+export const getOverdueAmountListAsync = (params = {}, requestHeard) => {
+  return defHttpOnline.get({ url: '/vintage/overdueAmountListAsync', headers: { 'updateForce': requestHeard?.updateForce }, params })
+}
+// 获取金额列表 异步结果
+export const getSysApiCache = (params = {}) => {
+  return defHttpOnline.get({ url: '/sysApiCache/getSysApiCache', params })
+}
 /**
  * Vintage 指标 订单列表
  */
 export const getVintageOrderListOnline = (params = {}) => {
   return defHttpOnline.get({ url: '/vintage/overdueCountList', params })
 }
+
 /**
  * 首页顶部卡片统计
  */
@@ -373,12 +417,23 @@ export const getVintageOrderList = (params = {}) => {
   return defHttpOffline.get({ url: '/vintage/overdueCountList', params })
 }
 /**
+ * Vintage 指标 金额列表 --- new
+ */
+export const getVintageAmountList2 = (params = {}) => {
+  return defHttpOffline.get({ url: '/vintage2/overdueAmountList', params })
+}
+/**
+ * Vintage 指标 订单列表
+ */
+export const getVintageOrderList2 = (params = {}) => {
+  return defHttpOffline.get({ url: '/vintage2/overdueCountList', params })
+}
+/**
  * Vintage 指标 金额列表
  */
 export const getVintageAmountList = (params = {}) => {
   return defHttpOffline.get({ url: '/vintage/overdueAmountList', params })
 }
-
 /**
  * 昨日到期数据
  */
@@ -398,6 +453,12 @@ export const exportVintageTableExcel = async (params) => {
 // 获取线下 数据汇总
 export const getNewMain = async (params) => {
   return defHttpOffline.get(
+    { url: `/v2/statistics/new/main`, params, timeout: 5 * 60 * 1000 },
+    { isTransformResponse: false },
+  )
+}
+export const getMayiMain = async (params) => {
+  return defHttpOnline.get(
     { url: `/v2/statistics/new/main`, params, timeout: 5 * 60 * 1000 },
     { isTransformResponse: false },
   )
@@ -422,4 +483,7 @@ export const orderCountWeekBi = (data: any) => {
 export const querySearchData = (params: any) => {
   return defHttpOffline.get({ url: '/vintage/querySearchData', params }, { isTransformResponse: false })
 }
-
+// 获取发货时差曲线图数据
+export const chartStatisticlnfo2 = (params: any) => {
+  return defHttpOnline.get({ url: '/statistic/chartStatisticInfo2', params }, { isTransformResponse: false })
+}

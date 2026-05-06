@@ -73,7 +73,6 @@
         },
       })
       function afterFetch(data) {
-        console.log(data, '我是data')
         return data?.list
       }
       const [registerModal, { setModalProps, closeModal }] = useModalInner(async () => {

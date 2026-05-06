@@ -3,6 +3,7 @@ import { FormSchema } from '/@/components/Table'
 import { handleMonth } from '/@/utils/order'
 import dayjs from 'dayjs'
 import { getCategoryTree } from '/@/api/statistics/index'
+import { getAppList } from '/@/api/saas/app'
 export const columns: BasicColumn[] = [
   {
     title: '时间',
@@ -158,6 +159,28 @@ export const searchFormSchema: FormSchema[] = [
         value: 'id',
         key: 'id',
       },
+    },
+  },
+  {
+    field: 'merchantTerminalNoList',
+    label: '平台',
+    component: 'ApiSelect',
+    colProps: { span: 6 },
+    componentProps: () => {
+      return {
+        params: { limit: '999999' },
+        showSearch: true,
+        placeholder: '请选择小程序',
+        api: getAppList,
+        afterFetch: (data) => {
+          const ndata = data.list
+          return ndata
+        },
+        mode: 'multiple',
+        resultField: 'list',
+        labelField: 'appletName',
+        valueField: 'merchantTerminalNo',
+      }
     },
   },
 ]

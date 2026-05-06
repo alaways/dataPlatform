@@ -30,7 +30,7 @@ export function handleThanData(pdata, thanData) {
       })
     })
     // 2. 将原有的mob 值回 xx.xx%
-    console.log(pdata)
+    
 
     return handleMobValue(pdata, true)
   }

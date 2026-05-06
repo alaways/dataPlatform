@@ -15,12 +15,19 @@
           src="https://admin.gsrental.cn/mayiAdmin/#/Order/OrderSlippage?iframe=true"
         ></iframe>
       </ATabPane>
-      <ATabPane tab="零零享用租" key="llxz">
+      <ATabPane tab="零零享" key="llxz">
         <Llxs />
       </ATabPane>
       <ATabPane tab="俏租机" key="qzj">
         <Qzj />
       </ATabPane>
+      <!-- 新增得 还未对接 -->
+      <!-- <ATabPane tab="人人租" key="Rrz">
+        <Rrz />
+      </ATabPane>
+      <ATabPane tab="商城" key="Store">
+        <Store />
+      </ATabPane> -->
     </ATabs>
   </div>
 </template>
@@ -29,6 +36,8 @@
   import { Tabs } from 'ant-design-vue'
   import Llxs from './llxs.vue'
   import Qzj from './qzj.vue'
+  import Store from './Store.vue'
+  import Rrz from './Rrz.vue'
   export default defineComponent({
     name: 'OrderSlippagePage',
     components: {
@@ -36,6 +45,8 @@
       ATabPane: Tabs.TabPane,
       Llxs,
       Qzj,
+      Store,
+      Rrz,
     },
     setup() {
       const currentKey = ref('offline')

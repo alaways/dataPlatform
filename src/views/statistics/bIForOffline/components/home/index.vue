@@ -219,15 +219,15 @@
           isShow: hasPermission('todayOverOrderAmount'),
           color: '#ffff',
         },
-        {
-          id: 'rentalOrderOverdueRate',
-          label: '在租订单逾期率',
-          titple: '在租已逾期订单数/在租订单数',
-          amount: '',
-          isAddLv: true,
-          isShow: hasPermission('RentalOrderOverdueRate'),
-          color: '#fff',
-        },
+        // {
+        //   id: 'rentalOrderOverdueRate',
+        //   label: '在租订单逾期率',
+        //   titple: '在租已逾期订单数/在租订单数',
+        //   amount: '',
+        //   isAddLv: true,
+        //   isShow: hasPermission('RentalOrderOverdueRate'),
+        //   color: '#fff',
+        // },
       ])
       const orderAmountInfo = ref([
         {
@@ -548,7 +548,6 @@
             pieRef.value.init(event, cutRes.value)
           }
         })
-        console.log(event, cutRes.value, 'eventShow')
       }
       return {
         orderCount: orderCount.value?.filter((item: any) => item.isShow),

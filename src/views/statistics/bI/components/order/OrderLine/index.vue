@@ -1,12 +1,24 @@
 <script setup lang="ts">
-  import { onMounted, Ref, ref } from 'vue'
+  import { onMounted, Ref, ref, defineProps, watch } from 'vue'
   import { useECharts } from '/@/hooks/web/useECharts'
   import { getOrderOfLine } from '/@/api/statistics/index'
-
+  const props = defineProps({
+    merchantTerminalNoList: String,
+  })
   const pieChartRef = ref<HTMLDivElement | null>(null)
   const { setOptions } = useECharts(pieChartRef as Ref<HTMLDivElement>)
-  onMounted(async () => {
-    const res = await getOrderOfLine({ type: 1 })
+  watch(
+    () => props?.merchantTerminalNoList,
+    (value) => {
+      getOrderLineData(value)
+    },
+  )
+  const getOrderLineData = async (merchantTerminalNoList?: any) => {
+    const params: any = { type: 1 }
+    if (merchantTerminalNoList) {
+      params.merchantTerminalNoList = merchantTerminalNoList
+    }
+    const res = await getOrderOfLine(params)
     const data = res?.data
     if (data) {
       setOptions({
@@ -30,6 +42,9 @@
         ],
       })
     }
+  }
+  onMounted(async () => {
+    getOrderLineData(props?.merchantTerminalNoList)
   })
 </script>
 

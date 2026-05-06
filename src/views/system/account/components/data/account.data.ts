@@ -7,6 +7,7 @@ import { updateUserItem } from '/@/api/system/account'
 import { getRoleList } from '/@/api/system/role'
 import { getDeptList } from '/@/api/system/dept'
 import { useUserStore } from '/@/store/modules/user'
+import { getRoleListForMayi, getRoleListForNew } from '/@/api/system/account'
 // import { getAppList } from '/@/api/saas/app'
 // import { getProductList } from '/@/api/saas/product'
 // import { getSalespersonStoreList } from '/@/api/business/salesperson'
@@ -279,46 +280,52 @@ export const accountFormSchema: FormSchema[] = [
       ],
     },
   },
-  // {
-  //   field: 'offlineUid',
-  //   label: '关联线下员工账号',
-  //   labelWidth: 150,
-  //   component: 'ApiSelect',
-  //   colProps: { span: 20 },
-  //   componentProps: {
-  //     showSearch: true,
-  //     placeholder: '请选择员工',
-  //     api: getRoleListForNew,
-  //     afterFetch: (data) => {
-  //       console.log(data, '线下员工数据x')
-  //       return data.list || []
-  //     },
-  //     params: { limit: 999999, status: '1' },
-  //     resultField: 'list',
-  //     labelField: 'userName',
-  //     valueField: 'uid',
-  //   },
-  // },
-  // {
-  //   field: 'onlineUid',
-  //   label: '关联线下员工账号',
-  //   labelWidth: 150,
-  //   component: 'ApiSelect',
-  //   colProps: { span: 20 },
-  //   componentProps: {
-  //     showSearch: true,
-  //     placeholder: '请选择员工',
-  //     api: getRoleListForMayi,
-  //     afterFetch: (data) => {
-  //       console.log(data, '线下员工数据x')
-  //       return data.list || []
-  //     },
-  //     params: { limit: 999999, status: '1' },
-  //     resultField: 'list',
-  //     labelField: 'userName',
-  //     valueField: 'uid',
-  //   },
-  // },
+  {
+    field: 'offlineUid',
+    label: '关联线下员工账号',
+    labelWidth: 150,
+    component: 'ApiSelect',
+    colProps: { span: 20 },
+    componentProps: {
+      showSearch: true,
+      placeholder: '请选择员工',
+      api: getRoleListForNew,
+      afterFetch: (data) => {
+        const list = data.list?.map(item => {
+          item.nloginName = `${item.userName}(${item.loginName})`
+          return item
+        })
+        return list || []
+      },
+      params: { limit: 999999, status: '1' },
+      resultField: 'list',
+      labelField: 'nloginName',
+      valueField: 'uid',
+    },
+  },
+  {
+    field: 'onlineUid',
+    label: '关联线上员工账号',
+    labelWidth: 150,
+    component: 'ApiSelect',
+    colProps: { span: 20 },
+    componentProps: {
+      showSearch: true,
+      placeholder: '请选择员工',
+      api: getRoleListForMayi,
+      afterFetch: (data) => {
+        const list = data.list?.map(item => {
+          item.nloginName = `${item.userName}(${item.loginName})`
+          return item
+        })
+        return list || []
+      },
+      params: { limit: 999999, status: '1' },
+      resultField: 'list',
+      labelField: 'nloginName',
+      valueField: 'uid',
+    },
+  },
 ]
 
 export const passwordFormSchema: FormSchema[] = [

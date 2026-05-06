@@ -11,17 +11,15 @@
 
   const pieChartRef = ref<HTMLDivElement | null>(null)
   const { setOptions } = useECharts(pieChartRef as Ref<HTMLDivElement>)
-  console.log('respdataShow --props', props.pdata)
   watch(
     () => props.pdata,
     (data) => {
       xlist.value = data?.xlist || []
       zzList.value = data?.ylist[0]?.map((v) => Number(v)) || []
       yqList.value = data?.ylist[1]?.map((v) => Number(v)) || []
-      console.log('respdataShow --1', data)
       let infodata = ['新增订单']
-      let yAxis = [{ type: 'value', name: '新增订单' }]
-      let series = [
+      let yAxis: any = [{ type: 'value', name: '新增订单' }]
+      let series: any = [
         { name: '新增订单', type: 'line', stack: 'Stack1', yAxisIndex: 0, data: zzList.value },
       ]
 
