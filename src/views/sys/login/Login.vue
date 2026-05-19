@@ -12,7 +12,6 @@
     <span class="-enter-x xl:hidden">
       <AppLogo :alwaysShowTitle="true" />
     </span>
-
     <div class="container relative h-full py-2 mx-auto sm:px-10">
       <div class="flex h-full">
         <div class="hidden min-h-full pl-4 mr-4 xl:flex xl:flex-col xl:w-6/12">
@@ -40,6 +39,10 @@
             <ForgetPasswordForm />
             <RegisterForm />
             <MobileForm />
+            <div class="devBtn">
+              <span :class="envType != 'dev' ? 'active' : 'span1'" @click="() => onChangeEnv('pro')">Pro</span>
+              <span :class="envType == 'dev' ? 'active' : 'span1'" @click="() => onChangeEnv('dev')">Test</span>
+            </div>
           </div>
         </div>
       </div>
@@ -47,7 +50,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed } from 'vue'
+  import { computed, ref } from 'vue'
   import { AppLogo } from '/@/components/Application'
   import { AppLocalePicker, AppDarkModeToggle } from '/@/components/Application'
   import LoginForm from './LoginForm.vue'
@@ -69,6 +72,12 @@
   const localeStore = useLocaleStore()
   const showLocale = localeStore.getShowPicker
   const title = computed(() => globSetting?.title ?? '')
+  const envType = ref(localStorage.getItem('envType') || 'pro')
+  const onChangeEnv = (env: string) => {
+    console.log(env, 'envTypeShow')
+    localStorage.setItem('envType', env)
+    envType.value = env
+  }
 </script>
 <style lang="less">
   @prefix-cls: ~'@{namespace}-login';
@@ -208,6 +217,18 @@
     .ant-divider-inner-text {
       font-size: 12px;
       color: @text-color-secondary;
+    }
+  }
+  .devBtn {
+    display: flex;
+    color: #919191;
+    justify-content: center;
+    span {
+      margin: 0 10px;
+      cursor: pointer;
+    }
+    .active {
+      color: #555;
     }
   }
 </style>

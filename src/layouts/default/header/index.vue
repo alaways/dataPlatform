@@ -9,6 +9,8 @@
         :theme="getHeaderTheme"
         :style="getLogoWidth"
       />
+      
+      
       <LayoutTrigger
         v-if="
           (getShowContent && getShowHeaderTrigger && !getSplit && !getIsMixSidebar) || getIsMobile
@@ -33,6 +35,7 @@
 
     <!-- action  -->
     <div :class="`${prefixCls}-action`">
+      
       <AppSearch :class="`${prefixCls}-action__item `" v-if="getShowSearch" />
 
       <Notify v-if="getShowNotice" :class="`${prefixCls}-action__item notify-item`" />

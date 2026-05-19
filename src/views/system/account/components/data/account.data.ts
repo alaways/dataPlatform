@@ -12,6 +12,7 @@ import { getRoleListForMayi, getRoleListForNew } from '/@/api/system/account'
 // import { getProductList } from '/@/api/saas/product'
 // import { getSalespersonStoreList } from '/@/api/business/salesperson'
 export const columns: BasicColumn[] = [
+  
   {
     title: '登录名',
     dataIndex: 'loginName',
@@ -141,6 +142,20 @@ export const accountFormSchema: FormSchema[] = [
     label: 'UID',
     component: 'Input',
     show: false,
+  },
+  {
+    field: 'envType',
+    label: '环境变量',
+    component: 'Select',
+    required: true,
+    colProps: { span: 20 },
+    defaultValue: 'pro',
+    componentProps: {
+      options: [
+        { label: '测试', value: 'loc' },
+        { label: '生产', value: 'pro' },
+      ]
+    }
   },
   {
     field: 'loginName',
@@ -291,7 +306,7 @@ export const accountFormSchema: FormSchema[] = [
       placeholder: '请选择员工',
       api: getRoleListForNew,
       afterFetch: (data) => {
-        const list = data.list?.map(item => {
+        const list = data.list?.map((item: any) => {
           item.nloginName = `${item.userName}(${item.loginName})`
           return item
         })

@@ -142,8 +142,8 @@ export const getOrderTest12 = async (params) => {
 export const getOrderTest14 = async (params) => {
   return defHttpOnline.get({ url: `/sysTH/test14`, params,  timeout: 60 * 1000 }, {isTransformResponse: false})
 }
-export const getOrderTest15 = async (params) => {
-  return defHttpOnline.get({ url: `/sysTH/test15`, params,  timeout: 60 * 1000 })
+export const getOrderTest15 = async (params, requestHeard) => {
+  return defHttpOnline.get({ url: `/sysTH/test15`, headers: { 'updateForce': requestHeard?.updateForce }, params,  timeout: 60 * 1000 }, )
 }
 export const orderOverdueReturnLv = async (params) => {
   return defHttpOnline.get({ url: `/vintage/orderOverdueReturnLv`, params, timeout: 60 * 1000 }, {isTransformResponse: false})

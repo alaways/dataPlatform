@@ -6,6 +6,7 @@
   const props = defineProps({
     type: String,
     params: Object || {},
+    parentType: String || Number,
   })
   const loading = ref<boolean>(true)
   const dlist = ref([])
@@ -17,20 +18,75 @@
       init()
     },
   )
+  watch(
+    () => props.parentType,
+    () => {
+      init()
+    },
+  )
   async function init() {
-    const res = await orderDataLineChart({ type: props.type, ...props.params })
-    const resMayi = await orderDataLineChartByMayi({ type: props.type, ...props.params })
-    let pdata = JSON.parse(JSON.stringify(res.data))
-    const tData = JSON.parse(JSON.stringify(resMayi.data))
-    pdata.ylist = pdata?.ylist?.map((item: any, index: number) => {
-      item = item?.map((citem: any, cindex: any) => {
-        let nitem = Number(citem)
-        nitem += Number(tData.ylist[index][cindex])
-        return nitem
+    let res = null
+    let resMayi = null
+    let resLLx = null
+    // 全部 或者没有 默认全部
+    if (props.parentType == 'all' || !props.parentType) {
+      res = await orderDataLineChart({ type: 1, ...props.params })
+      resLLx = await orderDataLineChart({ type: 2, ...props.params })
+      resMayi = await orderDataLineChartByMayi({ type: 1, ...props.params, merchantTerminalNoList: '2021004105683179,2023111709466887' })
+    }
+    if (props.parentType == 'offline') {
+      res = await orderDataLineChart({ type: 1, ...props.params })
+    }
+    if (props.parentType == 'online') {
+      resMayi = await orderDataLineChartByMayi({ type: 1, ...props.params, merchantTerminalNoList: '2021004105683179,2023111709466887' }) 
+    }
+    if (props.parentType == 'llxz') {
+      resLLx = await orderDataLineChart({ type: 2, ...props.params })
+    }
+    const objAll = {
+      'online': resMayi?.data?.ylist || [],
+      'offline': res?.data?.ylist || [],
+      'llxz': resLLx?.data?.ylist || [],
+    }
+    let pdata = {
+      xlist: props.parentType == 'online' ? resMayi?.data?.xlist : res?.data?.xlist || [],
+      ylist: objAll[props.parentType],
+      objectExt: null
+    }
+    let nData = {}
+    let tData = {}
+    let llData = {}
+    // 全部都有
+    if (res || resMayi || resLLx) {
+      if (props.parentType == 'online') {
+        tData = JSON.parse(JSON.stringify(resMayi?.data))
+      }
+      if (props.parentType == 'offline') {
+        nData = JSON.parse(JSON.stringify(res?.data))
+      }
+      if (props.parentType == 'llxz' && Object.keys(resLLx?.data).length) {
+        llData = JSON.parse(JSON.stringify(resLLx?.data))
+      }
+      // 所有的数据
+      if (props.parentType == 'all' || !props.parentType) {
+        tData = JSON.parse(JSON.stringify(resMayi?.data))
+        nData = JSON.parse(JSON.stringify(res?.data))
+        llData = JSON.parse(JSON.stringify(resLLx?.data))
+      }
+    }
+    // 全部才加数据
+    if (props.parentType == 'all' || !props.parentType) {
+      pdata.ylist = nData?.ylist?.map((item: any, index: number) => {
+        item = item?.map((citem: any, cindex: any) => {
+          let nitem = Number(citem)
+          if (tData) nitem += Number(tData?.ylist?.[index]?.[cindex])
+          if (llData && Object.keys(llData)?.length && llData?.ylist?.[0]?.length) nitem += Number(llData?.ylist?.[index]?.[cindex])
+          return nitem
+        })
+        return item
       })
-      return item
-    })
-    pdata.ylist?.map((item: any) => {
+    }
+    pdata?.ylist?.map((item: any) => {
       const allLen = item.filter((citem) => citem === '0')
       if (allLen.length == item.length) {
         notHas.value = new Date().valueOf()

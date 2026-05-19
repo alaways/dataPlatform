@@ -80,10 +80,12 @@
       }
       // 是否百分比
       const addLvHanld = (item: any, type = false, isNum) => {
+        if (!item) return '0%'
         if (type) {
           const num = item.toFixed(2)
           return `${num}%`
         }
+        console.log(item, 'addLvHanldShow')
         const num = Number(item).toFixed(6)
         const allNum = (Number(num) * 100).toFixed(3)
         let fen = String(allNum).split('.')[1]

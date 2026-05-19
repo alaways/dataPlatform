@@ -143,7 +143,7 @@
           color: 'yellow',
           titple: '当前逾期时间≥30天以上的订单逾期租金金额（订单状态：已逾期）',
           amount: '',
-          isShow: hasPermission('AllGDoverdueAmountGe30'),
+          isShow: hasPermission('AllGDoverdueAmountGe30') && loginUserId != isyoulezu,
         },
         {
           id: 'overdueAmountGe30Lv',
@@ -152,7 +152,7 @@
           titple: '逾期时间≥30天的订单逾期租金金额（订单状态：已逾期）/合同金额',
           amount: '',
           isAddLv: true,
-          isShow: hasPermission('AllGDoverdueAmountGe30Lv'),
+          isShow: hasPermission('AllGDoverdueAmountGe30Lv') && loginUserId != isyoulezu,
         },
         // 对股东可见
         {
@@ -161,7 +161,7 @@
           color: 'yellow',
           titple: '当前逾期时间≥30天以上的订单逾期租金金额（订单状态：已逾期）',
           amount: '',
-          isShow: hasPermission('AllGDoverdueAmountGe30') && loginUserId != isyoulezu,
+          isShow: hasPermission('AllGDoverdueAmountGe30ForW'),
         },
         {
           id: 'overdueAmountGe30LvForW',
@@ -170,7 +170,7 @@
           titple: '计算公式=当前逾期时间≥30天的订单逾期租金金额（订单状态：已逾期）/合同金额',
           amount: '',
           isAddLv: true,
-          isShow: hasPermission('AllGDoverdueAmountGe30Lv') && loginUserId != isyoulezu,
+          isShow: hasPermission('AllGDoverdueAmountGe30LvForW'),
         },
         {
           id: 'overdueAmountGe180',
@@ -208,7 +208,7 @@
           isShow: hasPermission('AllGDgoodsAmount'),
         },
         {
-          id: 'buyoutAmount',
+          id: 'buyoutRepaidAmount',
           label: '已收买断金额',
           amount: '',
           color: '#90EE90',
@@ -231,7 +231,7 @@
       const getData = async () => {
         // 获取线下 + 零零享租 数据
         const res = await getNewMain({ type: 4 })
-        const mayiRes = await getMayiMain({ type: 4 })
+        const mayiRes = await getMayiMain({ type: 1 })
         const ResObj = {
           totalOrderCount: 0,
           yesterdayTotalOrderCount: 0,
@@ -255,7 +255,7 @@
           overdueAmountGe180Lv: 0,
           receiveRentAmount: 0,
           goodsAmount: 0,
-          buyoutAmount: 0,
+          buyoutRepaidAmount: 0,
           otherAmount: 0,
         }
         // 线上 数据一致相加

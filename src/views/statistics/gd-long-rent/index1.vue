@@ -2,10 +2,10 @@
   <div v-if="loading" class="loading">
     <Spin size="large" tip="Loading..." />
   </div>
-  <!-- <Button :type="cutType == 'all' ? 'primary' : null" @click="() => getData('all')" style="margin-right: 10px">全部</Button> -->
-  <!-- <Button :type="cutType == 'offline' ? 'primary' : null" @click="() => getData('offline')" style="margin-right: 10px">只有线下数据</Button>
+  <Button :type="cutType == 'all' ? 'primary' : null" @click="() => getData('all')" style="margin-right: 10px">全部</Button>
+  <Button :type="cutType == 'offline' ? 'primary' : null" @click="() => getData('offline')" style="margin-right: 10px">只有线下数据</Button>
   <Button :type="cutType == 'online' ? 'primary' : null" @click="() => getData('online')" style="margin-right: 10px">只有线上数据</Button>
-  <Button :type="cutType == 'llxz' ? 'primary' : null" @click="() => getData('llxz')" style="margin-right: 10px">只有零享租数据</Button> -->
+  <Button :type="cutType == 'llxz' ? 'primary' : null" @click="() => getData('llxz')" style="margin-right: 10px">只有零享租数据</Button>
   <Card title="订单数据管理" :bordered="false" class="orderCard">
     <BaseCard :list="topContentChilds" :hideTitle="true" :res="cutRes" />
   </Card>
@@ -21,8 +21,6 @@
   import BaseCard from '../components/baseCard/index.vue'
   import { getMayiMain, getNewMain, getBIwMain } from '/@/api/statistics/index'
   import OrderLine from '../gd-all-new/OrderLine/index.vue'
-  import { useUserStore } from '/@/store/modules/user'
-
   export default defineComponent({
     name: 'LongDataReview',
     components: { Card, BaseCard, OrderLine, Spin, Button },
@@ -30,9 +28,6 @@
       const { hasPermission } = usePermission()
       const loading = ref(true)
       const cutType = ref('all')
-      const userStore = useUserStore()
-      const isyoulezu = '37512'
-      const loginUserId = userStore?.getUserInfo?.uid
       const topContentChilds = ref([
         {
           id: 'totalOrderCount',
@@ -148,7 +143,7 @@
           color: 'yellow',
           titple: '当前逾期时间≥30天以上的订单逾期租金金额（订单状态：已逾期）',
           amount: '',
-          isShow: hasPermission('AllGDoverdueAmountGe30') && loginUserId != isyoulezu,
+          isShow: hasPermission('AllGDoverdueAmountGe30'),
         },
         {
           id: 'overdueAmountGe30Lv',
@@ -157,25 +152,7 @@
           titple: '逾期时间≥30天的订单逾期租金金额（订单状态：已逾期）/合同金额',
           amount: '',
           isAddLv: true,
-          isShow: hasPermission('AllGDoverdueAmountGe30Lv') && loginUserId != isyoulezu,
-        },
-        // 对股东可见
-        {
-          id: 'overdueAmountGe30ForW',
-          label: '逾期时间≥30天的逾期金额',
-          color: 'yellow',
-          titple: '当前逾期时间≥30天以上的订单逾期租金金额（订单状态：已逾期）',
-          amount: '',
-          isShow: hasPermission('AllGDoverdueAmountGe30ForW'),
-        },
-        {
-          id: 'overdueAmountGe30LvForW',
-          label: '逾期时间≥30天的逾期率',
-          color: 'yellow',
-          titple: '计算公式=当前逾期时间≥30天的订单逾期租金金额（订单状态：已逾期）/合同金额',
-          amount: '',
-          isAddLv: true,
-          isShow: hasPermission('AllGDoverdueAmountGe30LvForW'),
+          isShow: hasPermission('AllGDoverdueAmountGe30Lv'),
         },
         {
           id: 'overdueAmountGe180',
@@ -248,7 +225,7 @@
         }
         // 只有线上的数据
         if (propType == 'online') {
-          mayiRes = await getMayiMain({ type: 1, merchantTerminalNoList: '2021004105683179,2023111709466887' })
+          mayiRes = await getMayiMain({ type: 4, merchantTerminalNoList: '2021004105683179,2023111709466887' })
         }
         // 零零享租
         if (propType == 'llxz') {
@@ -256,7 +233,7 @@
         }
         if (propType == 'all' || !propType) {
           res = await getNewMain({ type: 1 })
-          mayiRes = await getMayiMain({ type: 1, merchantTerminalNoList: '2021004105683179,2023111709466887' })
+          mayiRes = await getMayiMain({ type: 4, merchantTerminalNoList: '2021004105683179,2023111709466887' })
           resLLx = await getNewMain({ type: 2 })
         }
         console.log(res, '我是获取线下数据')
@@ -278,8 +255,6 @@
           overdueLv: 0,
           overdueAmountGe30: 0,
           overdueAmountGe30Lv: 0,
-          overdueAmountGe30ForW: 0,
-          overdueAmountGe30LvForW: 0,
           overdueAmountGe180: 0,
           overdueAmountGe180Lv: 0,
           receiveRentAmount: 0,
@@ -287,14 +262,14 @@
           buyoutRepaidAmount: 0,
           otherAmount: 0,
         }
-        // const topChildList = JSON.parse(JSON.stringify(topContentChilds.value))?.map(item => item.id)
-        // topChildList?.map((item, index) => {
-        //   document.querySelector('.orderCard .topChilds').children[index].setAttribute('testLabel', item)
-        // })
-        //  const contentList = JSON.parse(JSON.stringify(contentArrs.value))?.map(item => item.id)
-        // contentList?.map((item, index) => {
-        //   document.querySelector('.amoutCard .topChilds').children[index].setAttribute('testLabel', item)
-        // })
+        const topChildList = JSON.parse(JSON.stringify(topContentChilds.value))?.map(item => item.id)
+        topChildList?.map((item, index) => {
+          document.querySelector('.orderCard .topChilds').children[index].setAttribute('testLabel', item)
+        })
+         const contentList = JSON.parse(JSON.stringify(contentArrs.value))?.map(item => item.id)
+        contentList?.map((item, index) => {
+          document.querySelector('.amoutCard .topChilds').children[index].setAttribute('testLabel', item)
+        })
         setTimeout(() => {
           loading.value = false
         }, 800)
@@ -339,7 +314,6 @@
         // 30天逾期金额逾期率 = 30天逾期金额 / 合同价
         ResObj.overdueAmountGe30Lv = (ResObj?.overdueAmountGe30 || 0) / (ResObj?.futureContract || 0)
         ResObj.overdueAmountGe180Lv = (ResObj?.overdueAmountGe180 || 0) / (ResObj?.futureContract || 0)
-        ResObj.overdueAmountGe30LvForW = Number(ResObj.overdueAmountGe30ForW) / ResObj.futureContract
         cutRes.value = ResObj || {}
         
       }

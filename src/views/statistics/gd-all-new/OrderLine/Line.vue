@@ -13,6 +13,7 @@
   watch(
     () => props.pdata,
     (data) => {
+      console.log('watchPdataShow')
       xlist.value = data?.xlist || []
       zzList.value = data?.ylist[0]?.map((v) => Number(v)) || []
       yqList.value = data?.ylist[1]?.map((v) => Number(v)) || []

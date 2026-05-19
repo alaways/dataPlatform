@@ -16,7 +16,7 @@ import { setObjToUrlParams, deepMerge } from '/@/utils'
 import { useI18n } from '/@/hooks/web/useI18n'
 import { joinTimestamp, formatRequestDate } from './helper'
 import { useUserStoreWithOut } from '/@/store/modules/user'
-import { AxiosRetry } from '/@/utils/http/axios/axiosRetry'
+// import { AxiosRetry } from '/@/utils/http/axios/axiosRetry'
 import { useUserStore } from '/@/store/modules/user'
 export const controller = new AbortController()
 const globSetting = useGlobSetting()
@@ -29,10 +29,20 @@ const OFFLINE = '/offline'
 const ONLINE = '/mayiApi'
 const RISK = '/riskApi'
 // 租机的生产域名
-// 接口请求API
-export const NEWADMINAPI = 'https://admin.gsrental.cn/api'
-export const MAYIAPI = 'https://admin.gsrental.cn/mayiApi'
-export const RISKAPI = 'https://admin.gsrental.cn/riskApi'
+const getEnvType = () => {
+  // 接口请求API
+  const userInfo = localStorage.getItem('USERINFO')
+  let nuinfo = userInfo ? JSON.parse(userInfo) : {}
+  let envType: any = nuinfo?.envType
+  return envType
+}
+
+export const NEWADMINAPI =
+  getEnvType() == 'dev' ? 'https://test.gsrental.cn/api' : 'https://admin.gsrental.cn/api'
+export const MAYIAPI =
+  getEnvType() == 'dev' ? 'https://test.gsrental.cn/mayiApi' : 'https://admin.gsrental.cn/mayiApi'
+export const RISKAPI =
+  getEnvType() == 'dev' ? 'https://test.gsrental.cn/riskApi' : 'https://admin.gsrental.cn/riskApi'
 // 域名
 export const HOSTNEW = 'https://admin.gsrental.cn/newAdmin/'
 export const HOSTMAYI = 'https://admin.gsrental.cn/mayiAdmin/'
@@ -107,9 +117,10 @@ const transform: AxiosTransform = {
   beforeRequestHook: (config, options) => {
     const { apiUrl, joinPrefix, joinParamsToUrl, formatDate, joinTime = true, urlPrefix } = options
     if (joinPrefix) {
+      console.log(urlPrefix, config, options,'apiUrlJoinPreFix')
+      // 执行了
       config.url = `${urlPrefix}${config.url}`
     }
-
     if (apiUrl && isString(apiUrl)) {
       config.url = `${apiUrl}${config.url}`
     }
@@ -162,9 +173,11 @@ const transform: AxiosTransform = {
         if (OFFLINE) config.url = `${config.url?.replace(OFFLINE, '')}`
         if (ONLINE) config.url = `${config.url?.replace(ONLINE, '')}`
         if (RISK) config.url = `${config.url?.replace(RISK, '')}`
-        // config.url = 'http://192.168.1.11:8080'
-        config.url = config.url.replace('https://admin.gsrental.cn', 'https://admin.gsrental.cn')
-        //http://192.168.1.11:8080
+        config.url = config.url.replace(
+          'https://admin.gsrental.cn',
+          getEnvType() == 'dev' ? 'https://test.gsrental.cn' : 'https://admin.gsrental.cn',
+        )
+        // console.log(config.url, '我是configUrl')
       }
     }
     return config
@@ -177,13 +190,18 @@ const transform: AxiosTransform = {
     // 请求之前处理config
     let token = getToken()
     if (config.url?.indexOf('mayiApi') > -1) {
-      const AllToken = localStorage.getItem('AllToken') ? JSON.parse(localStorage.getItem('AllToken')) : null
+      const AllToken = localStorage.getItem('AllToken')
+        ? JSON.parse(localStorage.getItem('AllToken'))
+        : null
       if (AllToken) {
         token = 'Bearer ' + AllToken?.mayi || getToken()
       }
     }
-    if (config.url?.indexOf('https://admin.gsrental.cn/api') > -1) {
-      const AllToken = localStorage.getItem('AllToken') ? JSON.parse(localStorage.getItem('AllToken')) : null
+    // 线下接口 传线下的token
+    if (options?.requestOptions?.urlPrefix == '/offline') {
+      const AllToken = localStorage.getItem('AllToken')
+        ? JSON.parse(localStorage.getItem('AllToken'))
+        : null
       if (AllToken) {
         token = 'Bearer ' + AllToken?.newAdmin || getToken()
       }
@@ -194,10 +212,11 @@ const transform: AxiosTransform = {
         ? `${options.authenticationScheme} ${token}`
         : token
     }
-
     // 添加后端想要单独配置的headers数据
     const apiBase = localStorage.getItem('environment-name') || ''
-
+    if (getEnvType()) {
+      ;(config as Recordable).headers['environment-name'] = getEnvType() == 'dev' ? 'loc123' : 'pro'
+    }
     if (apiBase && !isAdmin()) {
       ;(config as Recordable).headers['environment-name'] = apiBase
     }
@@ -266,7 +285,9 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
   const _urlPrefix: any = opt?.requestOptions?.urlPrefix
   const isChecked = checkFn(_urlPrefix, [OFFLINE, ONLINE, RISK])
   const optionHeader: any = {}
-  const uinfo = localStorage.getItem('USERINFO') ? JSON.parse(localStorage.getItem('USERINFO')) : null
+  const uinfo = localStorage.getItem('USERINFO')
+    ? JSON.parse(localStorage.getItem('USERINFO'))
+    : null
   if (isChecked && uinfo?.uid == '42398518') {
     optionHeader['X-Data-Source'] = 'slave'
   } else {
